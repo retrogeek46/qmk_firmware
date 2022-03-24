@@ -23,6 +23,7 @@
 #include "openrgb.h"
 #include "raw_hid.h"
 #include "string.h"
+#include "print.h"
 #include <color.h>
 
 #if !defined(OPENRGB_DIRECT_MODE_STARTUP_RED)
@@ -165,6 +166,7 @@ static const uint8_t openrgb_rgb_matrix_effects_indexes[]           = {
 static uint8_t raw_hid_buffer[RAW_EPSIZE];
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
+    // printf("in raw_hid_receive %d", *data);
     switch (*data) {
         case OPENRGB_GET_PROTOCOL_VERSION:
             openrgb_get_protocol_version();
@@ -184,7 +186,6 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case OPENRGB_GET_ENABLED_MODES:
             openrgb_get_enabled_modes();
             break;
-
         case OPENRGB_SET_MODE:
             openrgb_set_mode(data);
             break;
@@ -193,6 +194,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             break;
         case OPENRGB_DIRECT_MODE_SET_LEDS:
             openrgb_direct_mode_set_leds(data);
+            break;
+        case 10:
+            // print("received 10");
+            update_encoder_state();
             break;
     }
 

@@ -16,6 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 #include <print.h>
+#include "raw_hid.h"
+#include "openrgb.h"
 
 enum layers {
     _QWERTY,
@@ -103,11 +105,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
+// HID Input
+// bool is_hid_connected = false;
+
+// void raw_hid_send_data(void) {
+//     uint8_t data[32] = {0};
+//     data[0] = encoder_mode + 1;
+//     raw_hid_send(data, sizeof(data));
+// }
+
+// void raw_hid_receive(uint8_t *data, uint8_t length) {
+//     is_hid_connected = true;
+
+//     // Initial connections use '1' in the first byte to indicate this
+//     if (length > 1 && data[0] == 1) {
+//         raw_hid_send_data();
+//         return;
+//     } else {
+//         if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
+//             encoder_mode = 0;
+//         } else {
+//             encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
+//         }
+//     }
+// }
+
+void update_encoder_state(void) {
+    // print("trigerred through raw_hid");
+    if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
+        encoder_mode = 0;
+    } else {
+        encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // print("some button pressed");
     switch (keycode) {
         // toggle encoder states
         case ENC_MODE:
             if (record->event.pressed) {
+                // print("changing encoder state using designated button");
                 if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
                     encoder_mode = 0;
                 } else {
@@ -171,13 +209,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 };
 
-// void keyboard_post_init_user(void) {
-//     // Customise these values to desired behaviour
-//     // debug_enable=true;
-//     // debug_matrix=true;
-//     //debug_keyboard=true;
-//     //debug_mouse=true;
-// }
+void keyboard_post_init_user(void) {
+    // Customise these values to desired behaviour
+    // debug_enable=true;
+    // debug_keyboard=true;
+}
 
 #ifdef RGB_MATRIX_ENABLE
 void rgb_matrix_indicators_kb(void) {

@@ -1,2 +1,7 @@
 RGB_MATRIX_ENABLE = yes
 OPENRGB_ENABLE = yes
+# RAW_ENABLE = yes
+# CONSOLE_ENABLE = yes
+
+# CFLAGS += -fcommon
+# EXTRAFLAGS += -flto
