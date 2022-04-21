@@ -28,7 +28,8 @@ enum layers {
 
 enum my_keycodes {
   ENC_MODE = SAFE_RANGE,
-  MOU_MODE
+  MOU_MODE,
+  MCR_TEST
 };
 
 enum encoder_modes {
@@ -39,7 +40,11 @@ enum encoder_modes {
 };
 
 uint8_t encoder_mode = ENC_MODE_0;
-bool mouseEnabled = false;
+bool mouseEnabled = false;\
+
+int cpu_rgb_R = 255;
+int cpu_rgb_G = 255;
+int cpu_rgb_B = 255;
 
 // qk_tap_dance_action_t tap_dance_actions[] = {
 //     [TD_SPCBAR] = ACTION_TAP_DANCE_DOUBLE(KC_SPC, KC_BSPC),
@@ -68,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Since this is, among other things, a "gaming" keyboard, a key combination to enable NKRO on the fly is provided for convenience.
     // Press Fn+N to toggle between 6KRO and NKRO. This setting is persisted to the EEPROM and thus persists between restarts.
     [_QWERTY] = LAYOUT(
-        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
+        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   MCR_TEST,LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
         KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
         MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           KC_HOME,
@@ -80,16 +85,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, KC_MYCM, KC_WHOM, KC_CALC, KC_MSEL, KC_MPRV, KC_MNXT, KC_MPLY, KC_MSTP, KC_MUTE, KC_VOLD, KC_VOLU, _______, KC_PSCR,         KC_MPLY,
         _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______,          _______,
         _______, _______, RGB_VAI, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RESET,            _______,
-        _______, _______, RGB_VAD, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          _______,
-        _______, _______, RGB_HUI, _______, _______, _______, NK_TOGG, _______, _______, _______, _______,          RGB_TOG,          RGB_MOD, _______,
+        _______, _______, RGB_VAD, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          KC_PGUP,
+        _______, _______, RGB_HUI, _______, _______, _______, NK_TOGG, _______, _______, _______, _______,          RGB_TOG,          RGB_MOD, KC_PGDN,
         _______, _______, _______,                            _______,                            _______, _______, _______, RGB_SPD, RGB_RMOD, RGB_SPI
     ),
 
     [_MAPS] = LAYOUT(
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, KC_F13,   KC_F14,  KC_F15,  KC_F16, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______, _______, _______,  KC_F18, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, KC_UP,   _______, _______, _______, _______, _______,          _______,
+        _______, _______, _______,  KC_F18, _______, _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,          _______,
         _______, _______, _______,  KC_F17, _______, _______, _______, _______, _______, _______, _______,          _______,          KC_MS_U, _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, KC_MS_L, KC_MS_D, KC_MS_R
     ),
@@ -105,31 +110,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-// HID Input
-// bool is_hid_connected = false;
+void keyboard_post_init_user(void) {
+    // Customise these values to desired behaviour
+    debug_enable=true;
+    debug_keyboard=true;
+}
 
-// void raw_hid_send_data(void) {
-//     uint8_t data[32] = {0};
-//     data[0] = encoder_mode + 1;
-//     raw_hid_send(data, sizeof(data));
-// }
-
-// void raw_hid_receive(uint8_t *data, uint8_t length) {
-//     is_hid_connected = true;
-
-//     // Initial connections use '1' in the first byte to indicate this
-//     if (length > 1 && data[0] == 1) {
-//         raw_hid_send_data();
-//         return;
-//     } else {
-//         if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
-//             encoder_mode = 0;
-//         } else {
-//             encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
-//         }
-//     }
-// }
-
+// HID
 void update_encoder_state(void) {
     // print("trigerred through raw_hid");
     if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
@@ -137,6 +124,27 @@ void update_encoder_state(void) {
     } else {
         encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
     }
+}
+
+void send_encoder_state(void) {
+    uint8_t send_data[32] = {23};
+    send_data[0] = encoder_mode + 1;
+    raw_hid_send(send_data, sizeof(send_data));
+    // printf("sending encoder state %d %d %d", send_data[0], send_data[1], sizeof(send_data));
+    // print(send_data[0]);
+    // printf(encoder_mode + 1 + '0');
+}
+
+void set_cpu_rgb_low(void) {
+    cpu_rgb_R = 0;
+    cpu_rgb_G = 255;
+    cpu_rgb_B = 0;
+}
+
+void set_cpu_rgb_high(void) {
+    cpu_rgb_R = 255;
+    cpu_rgb_G = 0;
+    cpu_rgb_B = 0;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -157,6 +165,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MOU_MODE:
             if (record->event.pressed) {
                 mouseEnabled = !mouseEnabled;
+            }
+            return false;
+        case MCR_TEST:
+            if (record->event.pressed) {
+                SEND_STRING("and state some through and well show very follow since day end person see help there new late head write on or large look more");
             }
             return false;
         // if mouse mode is active, arrow keys will control cursor
@@ -209,76 +222,70 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 };
 
-void keyboard_post_init_user(void) {
-    // Customise these values to desired behaviour
-    // debug_enable=true;
-    // debug_keyboard=true;
-}
-
 #ifdef RGB_MATRIX_ENABLE
 void rgb_matrix_indicators_kb(void) {
-    // left side
-    rgb_matrix_set_color(67, 0, 0, 0);
-    rgb_matrix_set_color(70, 0, 0, 0);
-    rgb_matrix_set_color(73, 0, 0, 0);
-    rgb_matrix_set_color(76, 0, 0, 0);
-    rgb_matrix_set_color(80, 0, 0, 0);
-    rgb_matrix_set_color(83, 0, 0, 0);
-    rgb_matrix_set_color(87, 0, 0, 0);
-    rgb_matrix_set_color(91, 0, 0, 0);
-    // right side
-    rgb_matrix_set_color(68, 0, 0, 0);
-    rgb_matrix_set_color(71, 0, 0, 0);
-    rgb_matrix_set_color(74, 0, 0, 0);
-    rgb_matrix_set_color(77, 0, 0, 0);
-    rgb_matrix_set_color(81, 0, 0, 0);
-    rgb_matrix_set_color(84, 0, 0, 0);
-    rgb_matrix_set_color(88, 0, 0, 0);
-    rgb_matrix_set_color(92, 0, 0, 0);
+    // // left side
+    // rgb_matrix_set_color(67, 255, 0, 255);
+    // rgb_matrix_set_color(70, 255, 0, 255);
+    // rgb_matrix_set_color(73, 255, 0, 255);
+    // rgb_matrix_set_color(76, 255, 0, 255);
+    // rgb_matrix_set_color(80, 255, 0, 255);
+    // rgb_matrix_set_color(83, 255, 0, 255);
+    // rgb_matrix_set_color(87, 255, 0, 255);
+    // rgb_matrix_set_color(91, 255, 0, 255);
+    // // right side
+    // rgb_matrix_set_color(68, 255, 0, 255);
+    // rgb_matrix_set_color(71, 255, 0, 255);
+    // rgb_matrix_set_color(74, 255, 0, 255);
+    // rgb_matrix_set_color(77, 255, 0, 255);
+    // rgb_matrix_set_color(81, 255, 0, 255);
+    // rgb_matrix_set_color(84, 255, 0, 255);
+    // rgb_matrix_set_color(88, 255, 0, 255);
+    // rgb_matrix_set_color(92, 255, 0, 255);
     switch (encoder_mode) {
         case ENC_MODE_0:
             // print screen
-            rgb_matrix_set_color(69, 0xff, 0xff, 0);
+            rgb_matrix_set_color(69, 0, 191, 255);
             // left side
-            // rgb_matrix_set_color(67, 0, 0x80, 0);
-            // rgb_matrix_set_color(70, 0, 0x80, 0);
-            // rgb_matrix_set_color(73, 0, 0x80, 0);
-            // rgb_matrix_set_color(76, 0, 0x80, 0);
-            // rgb_matrix_set_color(80, 0, 0x80, 0);
-            // rgb_matrix_set_color(83, 0, 0x80, 0);
-            // rgb_matrix_set_color(87, 0, 0x80, 0);
-            // rgb_matrix_set_color(91, 0, 0x80, 0);
+            rgb_matrix_set_color(67, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(70, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(73, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(76, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(80, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(83, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(87, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(91, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
             // right side
-            // rgb_matrix_set_color(68, 0, 0x80, 0);
-            // rgb_matrix_set_color(71, 0, 0x80, 0);
-            // rgb_matrix_set_color(74, 0, 0x80, 0);
-            // rgb_matrix_set_color(77, 0, 0x80, 0);
-            // rgb_matrix_set_color(81, 0, 0x80, 0);
-            // rgb_matrix_set_color(84, 0, 0x80, 0);
-            // rgb_matrix_set_color(88, 0, 0x80, 0);
-            // rgb_matrix_set_color(92, 0, 0x80, 0);
+            rgb_matrix_set_color(68, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(71, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(74, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(77, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(81, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(84, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(88, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(92, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
             break;
         case ENC_MODE_1:
             // print screen
-            rgb_matrix_set_color(69, 0xff, 0, 0);
+            rgb_matrix_set_color(69, 255, 0, 255);
             // left side
-            // rgb_matrix_set_color(67, 0xff, 0, 0);
-            // rgb_matrix_set_color(70, 0xff, 0, 0);
-            // rgb_matrix_set_color(73, 0xff, 0, 0);
-            // rgb_matrix_set_color(76, 0xff, 0, 0);
-            // rgb_matrix_set_color(80, 0xff, 0, 0);
-            // rgb_matrix_set_color(83, 0xff, 0, 0);
-            // rgb_matrix_set_color(87, 0xff, 0, 0);
-            // rgb_matrix_set_color(91, 0xff, 0, 0);
+            rgb_matrix_set_color(67, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(70, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(73, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(76, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(80, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(83, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(87, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(91, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
             // right side
-            // rgb_matrix_set_color(68, 0xff, 0, 0);
-            // rgb_matrix_set_color(71, 0xff, 0, 0);
-            // rgb_matrix_set_color(74, 0xff, 0, 0);
-            // rgb_matrix_set_color(77, 0xff, 0, 0);
-            // rgb_matrix_set_color(81, 0xff, 0, 0);
-            // rgb_matrix_set_color(84, 0xff, 0, 0);
-            // rgb_matrix_set_color(88, 0xff, 0, 0);
-            // rgb_matrix_set_color(92, 0xff, 0, 0);
+            rgb_matrix_set_color(68, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(71, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(74, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(77, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(81, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(84, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(88, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+            rgb_matrix_set_color(92, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
             break;
         case ENC_MODE_2:
             rgb_matrix_set_color(69, 0xff, 0x69, 0xB4);
@@ -317,6 +324,9 @@ void rgb_matrix_indicators_kb(void) {
             rgb_matrix_set_color(95, 0, 0, 0xff);
             rgb_matrix_set_color(97, 0, 0, 0xff);
             rgb_matrix_set_color(79, 0, 0, 0xff);
+            // PgUp PgDown
+            rgb_matrix_set_color(86, 0, 0, 0xff);
+            rgb_matrix_set_color(82, 0, 0, 0xff);
             break;
         case _MAPS:
             // print("In _MAPS Layer, setting RGB");

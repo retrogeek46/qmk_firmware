@@ -164,6 +164,7 @@ static const uint8_t openrgb_rgb_matrix_effects_indexes[]           = {
 #endif
 };
 static uint8_t raw_hid_buffer[RAW_EPSIZE];
+uint8_t send_data[32] = {0};
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     // printf("in raw_hid_receive %d", *data);
@@ -198,6 +199,21 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         case 10:
             // print("received 10");
             update_encoder_state();
+            break;
+        case 11:
+            // print("received 10");
+            send_encoder_state();
+            // send_data[0] = 69;
+            // raw_hid_send(send_data, sizeof(send_data));
+            // print("sending encoder state");
+            break;
+        case 12:
+            // print("received 12");
+            set_cpu_rgb_high();
+            break;
+        case 13:
+            // print("received 13");
+            set_cpu_rgb_low();
             break;
     }
 

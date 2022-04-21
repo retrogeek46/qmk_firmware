@@ -55,3 +55,6 @@ void openrgb_direct_mode_set_single_led(uint8_t *data);
 void openrgb_direct_mode_set_leds(uint8_t *data);
 
 void update_encoder_state(void);
+void send_encoder_state(void);
+void set_cpu_rgb_low(void);
+void set_cpu_rgb_high(void);
