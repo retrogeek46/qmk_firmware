@@ -27,5 +27,41 @@
     "[json]": {
 	    "editor.formatOnSave": false
     },
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "cSpell.words": [
+        "biton",
+        "BSLS",
+        "BSPC",
+        "COLEMAK",
+        "EEPROM",
+        "EPSIZE",
+        "LALT",
+        "LBRC",
+        "LCTL",
+        "leds",
+        "LGUI",
+        "LSFT",
+        "LWIN",
+        "MNXT",
+        "MPLY",
+        "MPRV",
+        "MSEL",
+        "MSTP",
+        "MYCM",
+        "NKRO",
+        "noeeprom",
+        "PGDN",
+        "PGUP",
+        "RBRC",
+        "RCTL",
+        "RGHT",
+        "RGUI",
+        "RMOD",
+        "RSFT",
+        "SCLN",
+        "SLSH",
+        "TOGG",
+        "VOLD",
+        "VOLU"
+    ]
 }

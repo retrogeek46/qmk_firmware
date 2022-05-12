@@ -40,11 +40,16 @@ enum encoder_modes {
 };
 
 uint8_t encoder_mode = ENC_MODE_0;
-bool mouseEnabled = false;\
+bool mouseEnabled = false;
 
-int cpu_rgb_R = 255;
-int cpu_rgb_G = 255;
-int cpu_rgb_B = 255;
+int cpu_rgb_R_68 = 255; int cpu_rgb_G_68 = 255; int cpu_rgb_B_68 = 255;
+int cpu_rgb_R_71 = 255; int cpu_rgb_G_71 = 255; int cpu_rgb_B_71 = 255;
+int cpu_rgb_R_74 = 255; int cpu_rgb_G_74 = 255; int cpu_rgb_B_74 = 255;
+int cpu_rgb_R_77 = 255; int cpu_rgb_G_77 = 255; int cpu_rgb_B_77 = 255;
+int cpu_rgb_R_81 = 255; int cpu_rgb_G_81 = 255; int cpu_rgb_B_81 = 255;
+int cpu_rgb_R_84 = 255; int cpu_rgb_G_84 = 255; int cpu_rgb_B_84 = 255;
+int cpu_rgb_R_88 = 255; int cpu_rgb_G_88 = 255; int cpu_rgb_B_88 = 255;
+int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
 
 // qk_tap_dance_action_t tap_dance_actions[] = {
 //     [TD_SPCBAR] = ACTION_TAP_DANCE_DOUBLE(KC_SPC, KC_BSPC),
@@ -135,16 +140,139 @@ void send_encoder_state(void) {
     // printf(encoder_mode + 1 + '0');
 }
 
-void set_cpu_rgb_low(void) {
-    cpu_rgb_R = 0;
-    cpu_rgb_G = 255;
-    cpu_rgb_B = 0;
+void cpu_temp_rgb_helper(int r, int g, int b, int led_index) {
+    switch (led_index)
+    {
+    case 0:
+        cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
+        cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
+        cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
+        cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
+        cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
+        cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
+        cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
+        cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
+        break;
+    case 68:
+        cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
+        break;
+    case 71:
+        cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
+        break;
+    case 74:
+        cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
+        break;
+    case 77:
+        cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
+        break;
+    case 81:
+        cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
+        break;
+    case 84:
+        cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
+        break;
+    case 88:
+        cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
+        break;
+    case 92:
+        cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
+        break;
+    default:
+        break;
+    }
 }
 
-void set_cpu_rgb_high(void) {
-    cpu_rgb_R = 255;
-    cpu_rgb_G = 0;
-    cpu_rgb_B = 0;
+void set_cpu_temp_rgb_low(void) {
+    // cpu_temp_rgb_helper(0,255,0);
+}
+
+void set_cpu_temp_rgb_high(void) {
+    // cpu_temp_rgb_helper(255,0,0);
+}
+
+void set_cpu_usage_rgb(uint8_t cpu_usage) {
+    if (cpu_usage < 20) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,255,255,74);
+        cpu_temp_rgb_helper(255,255,255,77);
+        cpu_temp_rgb_helper(255,255,255,81);
+        cpu_temp_rgb_helper(255,255,255,84);
+        cpu_temp_rgb_helper(255,255,255,88);
+        cpu_temp_rgb_helper(255,255,255,92); } else
+    if (cpu_usage >= 20 && cpu_usage < 30) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,255,255,74);
+        cpu_temp_rgb_helper(255,255,255,77);
+        cpu_temp_rgb_helper(255,255,255,81);
+        cpu_temp_rgb_helper(255,255,255,84);
+        cpu_temp_rgb_helper(255,255,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 30 && cpu_usage < 40) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,255,255,74);
+        cpu_temp_rgb_helper(255,255,255,77);
+        cpu_temp_rgb_helper(255,255,255,81);
+        cpu_temp_rgb_helper(255,255,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 40 && cpu_usage < 50) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,255,255,74);
+        cpu_temp_rgb_helper(255,255,255,77);
+        cpu_temp_rgb_helper(255,255,255,81);
+        cpu_temp_rgb_helper(255,0  ,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 50 && cpu_usage < 60) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,255,255,74);
+        cpu_temp_rgb_helper(255,255,255,77);
+        cpu_temp_rgb_helper(255,0  ,255,81);
+        cpu_temp_rgb_helper(255,0  ,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 60 && cpu_usage < 70) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,255,255,74);
+        cpu_temp_rgb_helper(255,0  ,255,77);
+        cpu_temp_rgb_helper(255,0  ,255,81);
+        cpu_temp_rgb_helper(255,0  ,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 70 && cpu_usage < 80) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,255,255,71);
+        cpu_temp_rgb_helper(255,0  ,255,74);
+        cpu_temp_rgb_helper(255,0  ,255,77);
+        cpu_temp_rgb_helper(255,0  ,255,81);
+        cpu_temp_rgb_helper(255,0  ,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 80 && cpu_usage < 90) {
+        cpu_temp_rgb_helper(255,255,255,68);
+        cpu_temp_rgb_helper(255,0  ,255,71);
+        cpu_temp_rgb_helper(255,0  ,255,74);
+        cpu_temp_rgb_helper(255,0  ,255,77);
+        cpu_temp_rgb_helper(255,0  ,255,81);
+        cpu_temp_rgb_helper(255,0  ,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92); } else
+    if (cpu_usage >= 90) {
+        cpu_temp_rgb_helper(255,0  ,255,68);
+        cpu_temp_rgb_helper(255,0  ,255,71);
+        cpu_temp_rgb_helper(255,0  ,255,74);
+        cpu_temp_rgb_helper(255,0  ,255,77);
+        cpu_temp_rgb_helper(255,0  ,255,81);
+        cpu_temp_rgb_helper(255,0  ,255,84);
+        cpu_temp_rgb_helper(255,0  ,255,88);
+        cpu_temp_rgb_helper(255,0  ,255,92);
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -224,68 +352,33 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 void rgb_matrix_indicators_kb(void) {
+    // sidebars
     // // left side
-    // rgb_matrix_set_color(67, 255, 0, 255);
-    // rgb_matrix_set_color(70, 255, 0, 255);
-    // rgb_matrix_set_color(73, 255, 0, 255);
-    // rgb_matrix_set_color(76, 255, 0, 255);
-    // rgb_matrix_set_color(80, 255, 0, 255);
-    // rgb_matrix_set_color(83, 255, 0, 255);
-    // rgb_matrix_set_color(87, 255, 0, 255);
-    // rgb_matrix_set_color(91, 255, 0, 255);
-    // // right side
-    // rgb_matrix_set_color(68, 255, 0, 255);
-    // rgb_matrix_set_color(71, 255, 0, 255);
-    // rgb_matrix_set_color(74, 255, 0, 255);
-    // rgb_matrix_set_color(77, 255, 0, 255);
-    // rgb_matrix_set_color(81, 255, 0, 255);
-    // rgb_matrix_set_color(84, 255, 0, 255);
-    // rgb_matrix_set_color(88, 255, 0, 255);
-    // rgb_matrix_set_color(92, 255, 0, 255);
+    // rgb_matrix_set_color(67, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(70, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(73, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(76, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(80, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(83, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(87, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // rgb_matrix_set_color(91, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
+    // right side
+    rgb_matrix_set_color(68, cpu_rgb_R_68, cpu_rgb_G_68, cpu_rgb_B_68);
+    rgb_matrix_set_color(71, cpu_rgb_R_71, cpu_rgb_G_71, cpu_rgb_B_71);
+    rgb_matrix_set_color(74, cpu_rgb_R_74, cpu_rgb_G_74, cpu_rgb_B_74);
+    rgb_matrix_set_color(77, cpu_rgb_R_77, cpu_rgb_G_77, cpu_rgb_B_77);
+    rgb_matrix_set_color(81, cpu_rgb_R_81, cpu_rgb_G_81, cpu_rgb_B_81);
+    rgb_matrix_set_color(84, cpu_rgb_R_84, cpu_rgb_G_84, cpu_rgb_B_84);
+    rgb_matrix_set_color(88, cpu_rgb_R_88, cpu_rgb_G_88, cpu_rgb_B_88);
+    rgb_matrix_set_color(92, cpu_rgb_R_92, cpu_rgb_G_92, cpu_rgb_B_92);
     switch (encoder_mode) {
         case ENC_MODE_0:
             // print screen
             rgb_matrix_set_color(69, 0, 191, 255);
-            // left side
-            rgb_matrix_set_color(67, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(70, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(73, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(76, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(80, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(83, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(87, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(91, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            // right side
-            rgb_matrix_set_color(68, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(71, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(74, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(77, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(81, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(84, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(88, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(92, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
             break;
         case ENC_MODE_1:
             // print screen
             rgb_matrix_set_color(69, 255, 0, 255);
-            // left side
-            rgb_matrix_set_color(67, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(70, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(73, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(76, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(80, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(83, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(87, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(91, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            // right side
-            rgb_matrix_set_color(68, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(71, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(74, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(77, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(81, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(84, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(88, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
-            rgb_matrix_set_color(92, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
             break;
         case ENC_MODE_2:
             rgb_matrix_set_color(69, 0xff, 0x69, 0xB4);

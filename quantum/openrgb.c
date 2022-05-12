@@ -167,7 +167,8 @@ static uint8_t raw_hid_buffer[RAW_EPSIZE];
 uint8_t send_data[32] = {0};
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-    // printf("in raw_hid_receive %d", *data);
+    // printf("in raw_hid_receive %d, %d, %s", *data, length, " |");
+    // printf("%d, %d, %s", data[1], data[2], " |");
     switch (*data) {
         case OPENRGB_GET_PROTOCOL_VERSION:
             openrgb_get_protocol_version();
@@ -208,12 +209,13 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             // print("sending encoder state");
             break;
         case 12:
-            // print("received 12");
-            set_cpu_rgb_high();
+            set_cpu_temp_rgb_high();
             break;
         case 13:
-            // print("received 13");
-            set_cpu_rgb_low();
+            set_cpu_temp_rgb_low();
+            break;
+        case 14:
+            set_cpu_usage_rgb(data[1]);
             break;
     }
 
