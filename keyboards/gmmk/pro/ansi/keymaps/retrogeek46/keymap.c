@@ -42,6 +42,9 @@ enum encoder_modes {
 uint8_t encoder_mode = ENC_MODE_0;
 bool mouseEnabled = false;
 
+int r_mod_8008 = 60 ; int g_mod_8008 = 71 ; int b_mod_8008 = 86 ;
+int r_acc_8008 = 243; int g_acc_8008 = 75 ; int b_acc_8008 = 127;
+
 int cpu_rgb_R_68 = 255; int cpu_rgb_G_68 = 255; int cpu_rgb_B_68 = 255;
 int cpu_rgb_R_71 = 255; int cpu_rgb_G_71 = 255; int cpu_rgb_B_71 = 255;
 int cpu_rgb_R_74 = 255; int cpu_rgb_G_74 = 255; int cpu_rgb_B_74 = 255;
@@ -50,6 +53,8 @@ int cpu_rgb_R_81 = 255; int cpu_rgb_G_81 = 255; int cpu_rgb_B_81 = 255;
 int cpu_rgb_R_84 = 255; int cpu_rgb_G_84 = 255; int cpu_rgb_B_84 = 255;
 int cpu_rgb_R_88 = 255; int cpu_rgb_G_88 = 255; int cpu_rgb_B_88 = 255;
 int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
+
+
 
 // qk_tap_dance_action_t tap_dance_actions[] = {
 //     [TD_SPCBAR] = ACTION_TAP_DANCE_DOUBLE(KC_SPC, KC_BSPC),
@@ -91,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______,          _______,
         _______, _______, RGB_VAI, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RESET,            _______,
         _______, _______, RGB_VAD, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          KC_PGUP,
-        _______, _______, RGB_HUI, _______, _______, _______, NK_TOGG, _______, _______, _______, _______,          RGB_TOG,          RGB_MOD, KC_PGDN,
+        _______, _______, RGB_HUD, RGB_HUI, _______, _______, NK_TOGG, _______, _______, _______, _______,          RGB_TOG,          RGB_MOD, KC_PGDN,
         _______, _______, _______,                            _______,                            _______, _______, _______, RGB_SPD, RGB_RMOD, RGB_SPI
     ),
 
@@ -192,86 +197,86 @@ void set_cpu_temp_rgb_high(void) {
 
 void set_cpu_usage_rgb(uint8_t cpu_usage) {
     if (cpu_usage < 20) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,255,255,74);
-        cpu_temp_rgb_helper(255,255,255,77);
-        cpu_temp_rgb_helper(255,255,255,81);
-        cpu_temp_rgb_helper(255,255,255,84);
-        cpu_temp_rgb_helper(255,255,255,88);
-        cpu_temp_rgb_helper(255,255,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 88);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 92); } else
     if (cpu_usage >= 20 && cpu_usage < 30) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,255,255,74);
-        cpu_temp_rgb_helper(255,255,255,77);
-        cpu_temp_rgb_helper(255,255,255,81);
-        cpu_temp_rgb_helper(255,255,255,84);
-        cpu_temp_rgb_helper(255,255,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 30 && cpu_usage < 40) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,255,255,74);
-        cpu_temp_rgb_helper(255,255,255,77);
-        cpu_temp_rgb_helper(255,255,255,81);
-        cpu_temp_rgb_helper(255,255,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 40 && cpu_usage < 50) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,255,255,74);
-        cpu_temp_rgb_helper(255,255,255,77);
-        cpu_temp_rgb_helper(255,255,255,81);
-        cpu_temp_rgb_helper(255,0  ,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 50 && cpu_usage < 60) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,255,255,74);
-        cpu_temp_rgb_helper(255,255,255,77);
-        cpu_temp_rgb_helper(255,0  ,255,81);
-        cpu_temp_rgb_helper(255,0  ,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 60 && cpu_usage < 70) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,255,255,74);
-        cpu_temp_rgb_helper(255,0  ,255,77);
-        cpu_temp_rgb_helper(255,0  ,255,81);
-        cpu_temp_rgb_helper(255,0  ,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 70 && cpu_usage < 80) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,255,255,71);
-        cpu_temp_rgb_helper(255,0  ,255,74);
-        cpu_temp_rgb_helper(255,0  ,255,77);
-        cpu_temp_rgb_helper(255,0  ,255,81);
-        cpu_temp_rgb_helper(255,0  ,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 74);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 80 && cpu_usage < 90) {
-        cpu_temp_rgb_helper(255,255,255,68);
-        cpu_temp_rgb_helper(255,0  ,255,71);
-        cpu_temp_rgb_helper(255,0  ,255,74);
-        cpu_temp_rgb_helper(255,0  ,255,77);
-        cpu_temp_rgb_helper(255,0  ,255,81);
-        cpu_temp_rgb_helper(255,0  ,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92); } else
+        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 71);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 74);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
     if (cpu_usage >= 90) {
-        cpu_temp_rgb_helper(255,0  ,255,68);
-        cpu_temp_rgb_helper(255,0  ,255,71);
-        cpu_temp_rgb_helper(255,0  ,255,74);
-        cpu_temp_rgb_helper(255,0  ,255,77);
-        cpu_temp_rgb_helper(255,0  ,255,81);
-        cpu_temp_rgb_helper(255,0  ,255,84);
-        cpu_temp_rgb_helper(255,0  ,255,88);
-        cpu_temp_rgb_helper(255,0  ,255,92);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 68);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 71);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 74);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
+        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92);
     }
 }
 
@@ -374,11 +379,11 @@ void rgb_matrix_indicators_kb(void) {
     switch (encoder_mode) {
         case ENC_MODE_0:
             // print screen
-            rgb_matrix_set_color(69, 0, 191, 255);
+            rgb_matrix_set_color(69, r_mod_8008, g_mod_8008, b_mod_8008);
             break;
         case ENC_MODE_1:
             // print screen
-            rgb_matrix_set_color(69, 255, 0, 255);
+            rgb_matrix_set_color(69, r_acc_8008, g_acc_8008, b_acc_8008);
             break;
         case ENC_MODE_2:
             rgb_matrix_set_color(69, 0xff, 0x69, 0xB4);
@@ -391,61 +396,61 @@ void rgb_matrix_indicators_kb(void) {
         case _FUNC:
             // print("In _FUNC Layer, setting RGB");
             // Print Screen
-            rgb_matrix_set_color(69, 0, 0, 0xff);
+            rgb_matrix_set_color(69, r_mod_8008, g_mod_8008, b_mod_8008);
             // Num Row
-            rgb_matrix_set_color(7,  0, 0, 0xff);
-            rgb_matrix_set_color(13, 0, 0, 0xff);
-            rgb_matrix_set_color(19, 0, 0, 0xff);
-            rgb_matrix_set_color(24, 0, 0, 0xff);
-            rgb_matrix_set_color(29, 0, 0, 0xff);
-            rgb_matrix_set_color(35, 0, 0, 0xff);
-            rgb_matrix_set_color(40, 0, 0, 0xff);
-            rgb_matrix_set_color(45, 0, 0, 0xff);
-            rgb_matrix_set_color(51, 0, 0, 0xff);
-            rgb_matrix_set_color(57, 0, 0, 0xff);
-            rgb_matrix_set_color(62, 0, 0, 0xff);
-            rgb_matrix_set_color(78,                 0, 0, 0xff);
+            rgb_matrix_set_color(7,  r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(13, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(19, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(24, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(29, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(35, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(40, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(45, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(51, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(57, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(62, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(78, r_mod_8008, g_mod_8008, b_mod_8008);
             // QMK RGB Controls
-            rgb_matrix_set_color(14, 0, 0, 0xff);
-            rgb_matrix_set_color(15, 0, 0, 0xff);
-            rgb_matrix_set_color(16, 0, 0, 0xff);
-            rgb_matrix_set_color(38, 0, 0, 0xff);
-            rgb_matrix_set_color(90, 0, 0, 0xff);
-            rgb_matrix_set_color(93, 0, 0, 0xff);
+            rgb_matrix_set_color(14, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(15, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(16, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(38, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(90, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(93, r_mod_8008, g_mod_8008, b_mod_8008);
             // Arrows
-            rgb_matrix_set_color(94, 0, 0, 0xff);
-            rgb_matrix_set_color(95, 0, 0, 0xff);
-            rgb_matrix_set_color(97, 0, 0, 0xff);
-            rgb_matrix_set_color(79, 0, 0, 0xff);
+            rgb_matrix_set_color(94, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
             // PgUp PgDown
-            rgb_matrix_set_color(86, 0, 0, 0xff);
-            rgb_matrix_set_color(82, 0, 0, 0xff);
+            rgb_matrix_set_color(86, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(82, r_mod_8008, g_mod_8008, b_mod_8008);
             break;
         case _MAPS:
             // print("In _MAPS Layer, setting RGB");
             // 1-2-3-4
-            rgb_matrix_set_color(7,  0, 0xff, 0);
-            rgb_matrix_set_color(13, 0, 0xff, 0);
-            rgb_matrix_set_color(19, 0, 0xff, 0);
-            rgb_matrix_set_color(24, 0, 0xff, 0);
+            rgb_matrix_set_color(7,  r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(13, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(19, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(24, r_mod_8008, g_mod_8008, b_mod_8008);
             // C-D
-            rgb_matrix_set_color(22, 0, 0xff, 0);
-            rgb_matrix_set_color(21, 0, 0xff, 0);
+            rgb_matrix_set_color(22, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(21, r_mod_8008, g_mod_8008, b_mod_8008);
             // Arrows
-            rgb_matrix_set_color(94, 0, 0xff, 0);
-            rgb_matrix_set_color(95, 0, 0xff, 0);
-            rgb_matrix_set_color(97, 0, 0xff, 0);
-            rgb_matrix_set_color(79, 0, 0xff, 0);
+            rgb_matrix_set_color(94, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
             break;
     }
     if (mouseEnabled && biton32(layer_state) == _QWERTY) {
         // F9
-        rgb_matrix_set_color(50, 0xff, 0, 0);
+        rgb_matrix_set_color(50, r_mod_8008, g_mod_8008, b_mod_8008);
         // Arrows
-        rgb_matrix_set_color(94, 0xf2, 0x52, 0x78);
-        rgb_matrix_set_color(95, 0xf2, 0x52, 0x78);
-        rgb_matrix_set_color(97, 0xf2, 0x52, 0x78);
-        rgb_matrix_set_color(79, 0xf2, 0x52, 0x78);
+        rgb_matrix_set_color(94, r_mod_8008, g_mod_8008, b_mod_8008);
+        rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
+        rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
+        rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
     }
 }
 #endif
