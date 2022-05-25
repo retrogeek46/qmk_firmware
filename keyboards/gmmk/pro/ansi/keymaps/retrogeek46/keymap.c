@@ -121,14 +121,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // clang-format on
 
 void keyboard_post_init_user(void) {
-    // Customise these values to desired behaviour
+    // Customize these values to desired behaviour
     debug_enable=true;
     debug_keyboard=true;
 }
 
 // HID
 void update_encoder_state(void) {
-    // print("trigerred through raw_hid");
+    // print("triggered through raw_hid");
     if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
         encoder_mode = 0;
     } else {
@@ -196,7 +196,7 @@ void set_cpu_temp_rgb_high(void) {
 }
 
 void set_cpu_usage_rgb(uint8_t cpu_usage) {
-    if (cpu_usage < 20) {
+    if (cpu_usage < 10) {
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
@@ -205,7 +205,7 @@ void set_cpu_usage_rgb(uint8_t cpu_usage) {
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 88);
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 92); } else
-    if (cpu_usage >= 20 && cpu_usage < 30) {
+    if (cpu_usage >= 10 && cpu_usage < 30) {
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
         cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
