@@ -59,3 +59,4 @@ void send_encoder_state(void);
 void set_cpu_temp_rgb_low(void);
 void set_cpu_temp_rgb_high(void);
 void set_cpu_usage_rgb(uint8_t);
+void update_os_state(uint8_t);

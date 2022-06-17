@@ -21,9 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 enum layers {
     _QWERTY,
+    _MACOS,
     _FUNC,
     _MAPS,
-    _COLEMAK
+    _COLEMAK,
 };
 
 enum my_keycodes {
@@ -40,6 +41,7 @@ enum encoder_modes {
 };
 
 uint8_t encoder_mode = ENC_MODE_0;
+uint8_t current_os = 0;
 bool mouseEnabled = false;
 
 int r_mod_8008 = 60 ; int g_mod_8008 = 71 ; int b_mod_8008 = 86 ;
@@ -55,6 +57,9 @@ int cpu_rgb_R_88 = 255; int cpu_rgb_G_88 = 255; int cpu_rgb_B_88 = 255;
 int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
 
 
+// macos specific defines
+#define MAC_HME LCTL(KC_LEFT)
+#define MAC_END LCTL(KC_RGHT)
 
 // qk_tap_dance_action_t tap_dance_actions[] = {
 //     [TD_SPCBAR] = ACTION_TAP_DANCE_DOUBLE(KC_SPC, KC_BSPC),
@@ -83,10 +88,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Since this is, among other things, a "gaming" keyboard, a key combination to enable NKRO on the fly is provided for convenience.
     // Press Fn+N to toggle between 6KRO and NKRO. This setting is persisted to the EEPROM and thus persists between restarts.
     [_QWERTY] = LAYOUT(
-        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   MCR_TEST,LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
+        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
         KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
-        MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           KC_HOME,
+        MO(_MACOS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   KC_END,
         KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
@@ -105,7 +110,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, KC_F13,   KC_F14,  KC_F15,  KC_F16, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______, _______, _______, _______, _______, _______, KC_UP,   _______, _______, _______, _______, _______,          _______,
         _______, _______, _______,  KC_F18, _______, _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,          _______,
-        _______, _______, _______,  KC_F17, _______, _______, _______, _______, _______, _______, _______,          _______,          KC_MS_U, _______,
+        _______, _______, _______,  KC_F17, _______, _______, _______, _______, _______, _______, _______,          _______,          KC_MS_U, MO(_MACOS),
         _______, _______, _______,                            _______,                            _______, _______, _______, KC_MS_L, KC_MS_D, KC_MS_R
     ),
 
@@ -116,6 +121,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         MO(_MAPS), KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,          KC_I,     KC_O,    KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   KC_END,
         KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
+    ),
+
+    [_MACOS] = LAYOUT(
+        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
+        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
+        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
+        MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           MAC_HME,
+        KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   MAC_END,
+        KC_LGUI,   KC_LCTL, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 };
 // clang-format on
@@ -280,13 +294,26 @@ void set_cpu_usage_rgb(uint8_t cpu_usage) {
     }
 }
 
+void update_os_state(uint8_t current_os_param) {
+    // print("change current os");
+    if (current_os_param == 1) {
+        print("change current os to mac\n");
+        tap_code_delay(KC_F7, 1000);
+        // layer_state_set(_MACOS);
+    } else {
+        print("change current os to win\n");
+        tap_code_delay(KC_F7, 1000);
+        // layer_state_set(_QWERTY);
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // print("some button pressed");
     switch (keycode) {
         // toggle encoder states
         case ENC_MODE:
+            // print("detected keystroke");
             if (record->event.pressed) {
-                // print("changing encoder state using designated button");
                 if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
                     encoder_mode = 0;
                 } else {
@@ -294,17 +321,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
+        // // toggle OS layers
+        case KC_F7:
+            print("detected keystroke\n");
+            return true;
         // toggle mouse mode
         case MOU_MODE:
             if (record->event.pressed) {
                 mouseEnabled = !mouseEnabled;
+                print("updating to macos layer in mouse toggle\n");
+                layer_state_set(_MACOS);
             }
             return false;
-        case MCR_TEST:
-            if (record->event.pressed) {
-                SEND_STRING("and state some through and well show very follow since day end person see help there new late head write on or large look more");
-            }
-            return false;
+        // case MCR_TEST:
+        //     if (record->event.pressed) {
+        //         SEND_STRING("and state some through and well show very follow since day end person see help there new late head write on or large look more");
+        //     }
+        //     return false;
         // if mouse mode is active, arrow keys will control cursor
         case KC_UP:
             if (mouseEnabled) {
@@ -441,6 +474,10 @@ void rgb_matrix_indicators_kb(void) {
             rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
             rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
             rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
+            break;
+        case _MACOS:
+            print("macos in rgb");
+            rgb_matrix_set_color(0, 0, 0, 255);
             break;
     }
     if (mouseEnabled && biton32(layer_state) == _QWERTY) {
