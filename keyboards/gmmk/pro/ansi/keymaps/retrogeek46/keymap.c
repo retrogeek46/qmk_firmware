@@ -91,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
         KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
-        MO(_MACOS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           KC_HOME,
+        MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           KC_HOME,
         KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   KC_END,
         KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
@@ -296,15 +296,17 @@ void set_cpu_usage_rgb(uint8_t cpu_usage) {
 
 void update_os_state(uint8_t current_os_param) {
     // print("change current os");
-    if (current_os_param == 1) {
-        print("change current os to mac\n");
-        tap_code_delay(KC_F7, 1000);
-        // layer_state_set(_MACOS);
-    } else {
-        print("change current os to win\n");
-        tap_code_delay(KC_F7, 1000);
-        // layer_state_set(_QWERTY);
-    }
+    current_os = current_os_param;
+    // if (current_os_param == 1) {
+    //     print("change current os to mac\n");
+
+    //     tap_code_delay(KC_F7, 1000);
+    //     // layer_state_set(_MACOS);
+    // } else {
+    //     print("change current os to win\n");
+    //     tap_code_delay(KC_F7, 1000);
+    //     // layer_state_set(_QWERTY);
+    // }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -321,21 +323,44 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        // // toggle OS layers
-        case KC_F7:
-            print("detected keystroke\n");
+        // os toggle stuff
+        case KC_HOME:
+            if (current_os == 1) {
+                if (record->event.pressed) {
+                    register_code(KC_LGUI);
+                    register_code(KC_LEFT);
+                } else {
+                    unregister_code(KC_LGUI);
+                    unregister_code(KC_LEFT);
+                }
+                return false;
+            } else {
+                return true;
+            }
+            return true;
+        case KC_END:
+            if (current_os == 1) {
+                if (record->event.pressed) {
+                    register_code(KC_LGUI);
+                    register_code(KC_RIGHT);
+                } else {
+                    unregister_code(KC_LGUI);
+                    unregister_code(KC_RIGHT);
+                }
+                return false;
+            } else {
+                return true;
+            }
             return true;
         // toggle mouse mode
         case MOU_MODE:
             if (record->event.pressed) {
                 mouseEnabled = !mouseEnabled;
-                print("updating to macos layer in mouse toggle\n");
-                layer_state_set(_MACOS);
             }
             return false;
         // case MCR_TEST:
         //     if (record->event.pressed) {
-        //         SEND_STRING("and state some through and well show very follow since day end person see help there new late head write on or large look more");
+        //         SEND_STRING("test");
         //     }
         //     return false;
         // if mouse mode is active, arrow keys will control cursor
@@ -351,6 +376,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
         case KC_LEFT:
+            if (current_os == 1 && (get_mods() & MOD_BIT(KC_LCTL))) {
+                if (record->event.pressed) {
+                    register_code(KC_LALT);
+                    register_code(KC_LEFT);
+                } else {
+                    unregister_code(KC_LALT);
+                    unregister_code(KC_LEFT);
+                }
+                return false;
+            }
             if (mouseEnabled) {
                 if (record->event.pressed) {
                     register_code(KC_MS_L);
@@ -373,6 +408,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
         case KC_RGHT:
+            if (current_os == 1 && (get_mods() & MOD_BIT(KC_LCTL))) {
+                if (record->event.pressed) {
+                    register_code(KC_LALT);
+                    register_code(KC_RIGHT);
+                } else {
+                    unregister_code(KC_LALT);
+                    unregister_code(KC_RIGHT);
+                }
+                return false;
+            }
             if (mouseEnabled) {
                 if (record->event.pressed) {
                     register_code(KC_MS_R);
@@ -476,7 +521,7 @@ void rgb_matrix_indicators_kb(void) {
             rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
             break;
         case _MACOS:
-            print("macos in rgb");
+            // print("macos in rgb");
             rgb_matrix_set_color(0, 0, 0, 255);
             break;
     }
