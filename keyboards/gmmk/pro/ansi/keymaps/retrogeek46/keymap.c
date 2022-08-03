@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 enum layers {
     _QWERTY,
-    _COLEMAK,
+    _COLEMAK_DH,
     _MACOS,
     _FUNC,
     _MAPS,
@@ -61,8 +61,10 @@ int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
 
 
 // macos specific defines
-#define MAC_HME LCTL(KC_LEFT)
-#define MAC_END LCTL(KC_RGHT)
+#define MAC_HME LGUI(KC_LEFT)
+#define MAC_END LGUI(KC_RGHT)
+#define M_CAP_ALL LSG(KC_3)
+#define M_CAP_PART LSG(KC_4)
 
 // qk_tap_dance_action_t tap_dance_actions[] = {
 //     [TD_SPCBAR] = ACTION_TAP_DANCE_DOUBLE(KC_SPC, KC_BSPC),
@@ -99,22 +101,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
-    [_COLEMAK] = LAYOUT(
+    [_COLEMAK_DH] = LAYOUT(
         KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
         KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
-        KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,          KC_Y,     KC_SCLN, KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
-        MO(_MAPS), KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,          KC_I,     KC_O,    KC_QUOT,            KC_ENT,           KC_HOME,
-        KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   KC_END,
+        KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,          KC_Y,     KC_SCLN, KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
+        MO(_MAPS), KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,          KC_I,     KC_O,    KC_QUOT,            KC_ENT,           KC_HOME,
+        KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   KC_END,
         KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
     [_MACOS] = LAYOUT(
-        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   LWIN(KC_PSCR), MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
-        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
-        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
-        MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           KC_HOME,
-        KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   KC_END,
-        KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                    KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
+        KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   M_CAP_PART, M_CAP_ALL,     MOU_MODE, KC_BTN1, KC_BTN3,   KC_BTN2, ENC_MODE,         KC_MPLY,
+        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,       KC_8,          KC_9,     KC_0,    KC_MINS,   KC_EQL,  KC_BSPC,          KC_DEL,
+        KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,       KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
+        MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,       KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           MAC_HME,
+        KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,       KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   MAC_END,
+        KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                       KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
     [_FUNC] = LAYOUT(
@@ -306,17 +308,13 @@ int get_next_layer(void) {
 void update_os_state(uint8_t current_os_param) {
     // print("change current os");
     current_os = current_os_param;
-    layer_move(_MACOS);
-    // if (current_os_param == 1) {
-    //     print("change current os to mac\n");
-
-    //     tap_code_delay(KC_F7, 1000);
-    //     // layer_state_set(_MACOS);
-    // } else {
-    //     print("change current os to win\n");
-    //     tap_code_delay(KC_F7, 1000);
-    //     // layer_state_set(_QWERTY);
-    // }
+    if (current_os_param == 1) {
+        // print("change current os to mac\n");
+        layer_move(_MACOS);
+    } else {
+        // print("change current os to win\n");
+        layer_move(_QWERTY);
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -368,29 +366,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
             return true;
-        case KC_C:
-        case KC_V:
-        case KC_Z:
-        case KC_X:
-        case KC_A:
-        case KC_S:
-            if (current_os == 100 && (get_mods() & MOD_MASK_CAG)) {
-                int current_mods = get_mods() & MOD_MASK_CA;
-                // clear_mods();
-                del_mods(current_mods);
-                if (record->event.pressed) {
-                    register_code(KC_LGUI);
-                    register_code(keycode);
-                } else {
-                    unregister_code(KC_LGUI);
-                    unregister_code(keycode);
-                }
-                add_mods(current_mods);
-                return false;
-            } else {
-                return true;
-            }
-            return true;
         // toggle mouse mode
         case MOU_MODE:
             if (record->event.pressed) {
@@ -410,20 +385,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
         case KC_LEFT:
-            if (current_os == 100 && (get_mods() & MOD_MASK_CAG)) {
-                int current_mods = get_mods() & MOD_MASK_CG;
-                // clear_mods();
-                del_mods(current_mods);
-                if (record->event.pressed) {
-                    register_code(KC_LALT);
-                    register_code(KC_LEFT);
-                } else {
-                    unregister_code(KC_LALT);
-                    unregister_code(KC_LEFT);
-                }
-                add_mods(current_mods);
-                return false;
-            }
             if (mouseEnabled) {
                 if (record->event.pressed) {
                     register_code(KC_MS_L);
@@ -446,20 +407,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
         case KC_RGHT:
-            if (current_os == 100 && (get_mods() & MOD_MASK_CAG)) {
-                int current_mods = get_mods() & MOD_MASK_CG;
-                // clear_mods();
-                del_mods(current_mods);
-                if (record->event.pressed) {
-                    register_code(KC_LALT);
-                    register_code(KC_RIGHT);
-                } else {
-                    unregister_code(KC_LALT);
-                    unregister_code(KC_RIGHT);
-                }
-                add_mods(current_mods);
-                return false;
-            }
             if (mouseEnabled) {
                 if (record->event.pressed) {
                     register_code(KC_MS_R);
@@ -576,7 +523,7 @@ void rgb_matrix_indicators_kb(void) {
             // Del
             rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
             break;
-        case _COLEMAK:
+        case _COLEMAK_DH:
             rgb_matrix_set_color(0,  0, 255, 255);
             break;
         case _MACOS:
