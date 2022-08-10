@@ -47,17 +47,34 @@ uint8_t current_os = 0;
 uint8_t layer_to_switch = 0;
 bool mouseEnabled = false;
 
-int r_mod_8008 = 60 ; int g_mod_8008 = 71 ; int b_mod_8008 = 86 ;
-int r_acc_8008 = 243; int g_acc_8008 = 75 ; int b_acc_8008 = 127;
+// int r_mod_8008 = 60 ; int g_mod_8008 = 71 ; int b_mod_8008 = 86 ;
+// int r_acc_8008 = 243; int g_acc_8008 = 75 ; int b_acc_8008 = 127;
 
-int cpu_rgb_R_68 = 255; int cpu_rgb_G_68 = 255; int cpu_rgb_B_68 = 255;
-int cpu_rgb_R_71 = 255; int cpu_rgb_G_71 = 255; int cpu_rgb_B_71 = 255;
-int cpu_rgb_R_74 = 255; int cpu_rgb_G_74 = 255; int cpu_rgb_B_74 = 255;
-int cpu_rgb_R_77 = 255; int cpu_rgb_G_77 = 255; int cpu_rgb_B_77 = 255;
-int cpu_rgb_R_81 = 255; int cpu_rgb_G_81 = 255; int cpu_rgb_B_81 = 255;
-int cpu_rgb_R_84 = 255; int cpu_rgb_G_84 = 255; int cpu_rgb_B_84 = 255;
-int cpu_rgb_R_88 = 255; int cpu_rgb_G_88 = 255; int cpu_rgb_B_88 = 255;
-int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
+int col_mod_8008[3] = {60, 71, 86};
+int col_acc_8008[3] = {243, 75, 127};
+
+int col_blue_susu[3] = {0, 255, 255};
+int col_yellow_susu[3] = {200, 200, 0};
+int col_red_susu[3] = {255, 0, 0};
+int col_green_susu[3] = {50, 255, 0};
+
+// int cpu_rgb_R_68 = 255; int cpu_rgb_G_68 = 255; int cpu_rgb_B_68 = 255;
+// int cpu_rgb_R_71 = 255; int cpu_rgb_G_71 = 255; int cpu_rgb_B_71 = 255;
+// int cpu_rgb_R_74 = 255; int cpu_rgb_G_74 = 255; int cpu_rgb_B_74 = 255;
+// int cpu_rgb_R_77 = 255; int cpu_rgb_G_77 = 255; int cpu_rgb_B_77 = 255;
+// int cpu_rgb_R_81 = 255; int cpu_rgb_G_81 = 255; int cpu_rgb_B_81 = 255;
+// int cpu_rgb_R_84 = 255; int cpu_rgb_G_84 = 255; int cpu_rgb_B_84 = 255;
+// int cpu_rgb_R_88 = 255; int cpu_rgb_G_88 = 255; int cpu_rgb_B_88 = 255;
+// int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
+
+int cpu_rgb_68[3] = {255, 255, 255};
+int cpu_rgb_71[3] = {255, 255, 255};
+int cpu_rgb_74[3] = {255, 255, 255};
+int cpu_rgb_77[3] = {255, 255, 255};
+int cpu_rgb_81[3] = {255, 255, 255};
+int cpu_rgb_84[3] = {255, 255, 255};
+int cpu_rgb_88[3] = {255, 255, 255};
+int cpu_rgb_92[3] = {255, 255, 255};
 
 
 // macos specific defines
@@ -116,7 +133,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,       KC_I,          KC_O,     KC_P,    KC_LBRC,   KC_RBRC, KC_BSLS,          KC_INS,
         MO(_MAPS), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,       KC_K,          KC_L,     KC_SCLN, KC_QUOT,            KC_ENT,           MAC_HME,
         KC_LSFT,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,       KC_COMM,       KC_DOT,   KC_SLSH,            KC_RSFT,          KC_UP,   MAC_END,
-        KC_LCTL,   KC_LGUI, KC_LALT,                            KC_SPC,                                       KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LALT, KC_LGUI,                            KC_SPC,                                       KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
     [_FUNC] = LAYOUT(
@@ -164,45 +181,60 @@ void send_encoder_state(void) {
     // printf(encoder_mode + 1 + '0');
 }
 
-void cpu_temp_rgb_helper(int r, int g, int b, int led_index) {
-    switch (led_index)
-    {
-    case 0:
-        cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
-        cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
-        cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
-        cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
-        cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
-        cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
-        cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
-        cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
-        break;
-    case 68:
-        cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
-        break;
-    case 71:
-        cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
-        break;
-    case 74:
-        cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
-        break;
-    case 77:
-        cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
-        break;
-    case 81:
-        cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
-        break;
-    case 84:
-        cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
-        break;
-    case 88:
-        cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
-        break;
-    case 92:
-        cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
-        break;
-    default:
-        break;
+void cpu_temp_rgb_helper(int col[], int led_index) {
+    switch (led_index) {
+        case 0:
+            // cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
+            // cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
+            // cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
+            // cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
+            // cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
+            // cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
+            // cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
+            // cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
+            cpu_rgb_68[0] = col[0]; cpu_rgb_68[1] = col[1]; cpu_rgb_68[2] = col[2];
+            cpu_rgb_71[0] = col[0]; cpu_rgb_71[1] = col[1]; cpu_rgb_71[2] = col[2];
+            cpu_rgb_74[0] = col[0]; cpu_rgb_74[1] = col[1]; cpu_rgb_74[2] = col[2];
+            cpu_rgb_77[0] = col[0]; cpu_rgb_77[1] = col[1]; cpu_rgb_77[2] = col[2];
+            cpu_rgb_81[0] = col[0]; cpu_rgb_81[1] = col[1]; cpu_rgb_81[2] = col[2];
+            cpu_rgb_84[0] = col[0]; cpu_rgb_84[1] = col[1]; cpu_rgb_84[2] = col[2];
+            cpu_rgb_88[0] = col[0]; cpu_rgb_88[1] = col[1]; cpu_rgb_88[2] = col[2];
+            cpu_rgb_92[0] = col[0]; cpu_rgb_92[1] = col[1]; cpu_rgb_92[2] = col[2];
+            break;
+        case 68:
+            // cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
+            cpu_rgb_68[0] = col[0]; cpu_rgb_68[1] = col[1]; cpu_rgb_68[2] = col[2];
+            break;
+        case 71:
+            // cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
+            cpu_rgb_71[0] = col[0]; cpu_rgb_71[1] = col[1]; cpu_rgb_71[2] = col[2];
+            break;
+        case 74:
+            // cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
+            cpu_rgb_74[0] = col[0]; cpu_rgb_74[1] = col[1]; cpu_rgb_74[2] = col[2];
+            break;
+        case 77:
+            // cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
+            cpu_rgb_77[0] = col[0]; cpu_rgb_77[1] = col[1]; cpu_rgb_77[2] = col[2];
+            break;
+        case 81:
+            // cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
+            cpu_rgb_81[0] = col[0]; cpu_rgb_81[1] = col[1]; cpu_rgb_81[2] = col[2];
+            break;
+        case 84:
+            // cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
+            cpu_rgb_84[0] = col[0]; cpu_rgb_84[1] = col[1]; cpu_rgb_84[2] = col[2];
+            break;
+        case 88:
+            // cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
+            cpu_rgb_88[0] = col[0]; cpu_rgb_88[1] = col[1]; cpu_rgb_88[2] = col[2];
+            break;
+        case 92:
+            // cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
+            cpu_rgb_92[0] = col[0]; cpu_rgb_92[1] = col[1]; cpu_rgb_92[2] = col[2];
+            break;
+        default:
+            break;
     }
 }
 
@@ -216,86 +248,86 @@ void set_cpu_temp_rgb_high(void) {
 
 void set_cpu_usage_rgb(uint8_t cpu_usage) {
     if (cpu_usage < 10) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 88);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_yellow_susu, 74);
+        cpu_temp_rgb_helper(col_yellow_susu, 77);
+        cpu_temp_rgb_helper(col_yellow_susu, 81);
+        cpu_temp_rgb_helper(col_yellow_susu, 84);
+        cpu_temp_rgb_helper(col_yellow_susu, 88);
+        cpu_temp_rgb_helper(col_yellow_susu, 92); } else
     if (cpu_usage >= 10 && cpu_usage < 30) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_yellow_susu, 74);
+        cpu_temp_rgb_helper(col_yellow_susu, 77);
+        cpu_temp_rgb_helper(col_yellow_susu, 81);
+        cpu_temp_rgb_helper(col_yellow_susu, 84);
+        cpu_temp_rgb_helper(col_yellow_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 30 && cpu_usage < 40) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_yellow_susu, 74);
+        cpu_temp_rgb_helper(col_yellow_susu, 77);
+        cpu_temp_rgb_helper(col_yellow_susu, 81);
+        cpu_temp_rgb_helper(col_yellow_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 40 && cpu_usage < 50) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 81);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_yellow_susu, 74);
+        cpu_temp_rgb_helper(col_yellow_susu, 77);
+        cpu_temp_rgb_helper(col_yellow_susu, 81);
+        cpu_temp_rgb_helper(col_red_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 50 && cpu_usage < 60) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 77);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_yellow_susu, 74);
+        cpu_temp_rgb_helper(col_yellow_susu, 77);
+        cpu_temp_rgb_helper(col_red_susu, 81);
+        cpu_temp_rgb_helper(col_red_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 60 && cpu_usage < 70) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 74);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_yellow_susu, 74);
+        cpu_temp_rgb_helper(col_red_susu, 77);
+        cpu_temp_rgb_helper(col_red_susu, 81);
+        cpu_temp_rgb_helper(col_red_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 70 && cpu_usage < 80) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 71);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 74);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_yellow_susu, 71);
+        cpu_temp_rgb_helper(col_red_susu, 74);
+        cpu_temp_rgb_helper(col_red_susu, 77);
+        cpu_temp_rgb_helper(col_red_susu, 81);
+        cpu_temp_rgb_helper(col_red_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 80 && cpu_usage < 90) {
-        cpu_temp_rgb_helper(r_mod_8008, g_mod_8008, b_mod_8008, 68);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 71);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 74);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92); } else
+        cpu_temp_rgb_helper(col_yellow_susu, 68);
+        cpu_temp_rgb_helper(col_red_susu, 71);
+        cpu_temp_rgb_helper(col_red_susu, 74);
+        cpu_temp_rgb_helper(col_red_susu, 77);
+        cpu_temp_rgb_helper(col_red_susu, 81);
+        cpu_temp_rgb_helper(col_red_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92); } else
     if (cpu_usage >= 90) {
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 68);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 71);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 74);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 77);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 81);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 84);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 88);
-        cpu_temp_rgb_helper(r_acc_8008, g_acc_8008, b_acc_8008, 92);
+        cpu_temp_rgb_helper(col_red_susu, 68);
+        cpu_temp_rgb_helper(col_red_susu, 71);
+        cpu_temp_rgb_helper(col_red_susu, 74);
+        cpu_temp_rgb_helper(col_red_susu, 77);
+        cpu_temp_rgb_helper(col_red_susu, 81);
+        cpu_temp_rgb_helper(col_red_susu, 84);
+        cpu_temp_rgb_helper(col_red_susu, 88);
+        cpu_temp_rgb_helper(col_red_susu, 92);
     }
 }
 
@@ -435,22 +467,22 @@ void rgb_matrix_indicators_kb(void) {
     // rgb_matrix_set_color(87, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
     // rgb_matrix_set_color(91, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
     // right side
-    rgb_matrix_set_color(68, cpu_rgb_R_68, cpu_rgb_G_68, cpu_rgb_B_68);
-    rgb_matrix_set_color(71, cpu_rgb_R_71, cpu_rgb_G_71, cpu_rgb_B_71);
-    rgb_matrix_set_color(74, cpu_rgb_R_74, cpu_rgb_G_74, cpu_rgb_B_74);
-    rgb_matrix_set_color(77, cpu_rgb_R_77, cpu_rgb_G_77, cpu_rgb_B_77);
-    rgb_matrix_set_color(81, cpu_rgb_R_81, cpu_rgb_G_81, cpu_rgb_B_81);
-    rgb_matrix_set_color(84, cpu_rgb_R_84, cpu_rgb_G_84, cpu_rgb_B_84);
-    rgb_matrix_set_color(88, cpu_rgb_R_88, cpu_rgb_G_88, cpu_rgb_B_88);
-    rgb_matrix_set_color(92, cpu_rgb_R_92, cpu_rgb_G_92, cpu_rgb_B_92);
+    rgb_matrix_set_color(68, cpu_rgb_68[0], cpu_rgb_68[1], cpu_rgb_68[2]);
+    rgb_matrix_set_color(71, cpu_rgb_71[0], cpu_rgb_71[1], cpu_rgb_71[2]);
+    rgb_matrix_set_color(74, cpu_rgb_74[0], cpu_rgb_74[1], cpu_rgb_74[2]);
+    rgb_matrix_set_color(77, cpu_rgb_77[0], cpu_rgb_77[1], cpu_rgb_77[2]);
+    rgb_matrix_set_color(81, cpu_rgb_81[0], cpu_rgb_81[1], cpu_rgb_81[2]);
+    rgb_matrix_set_color(84, cpu_rgb_84[0], cpu_rgb_84[1], cpu_rgb_84[2]);
+    rgb_matrix_set_color(88, cpu_rgb_88[0], cpu_rgb_88[1], cpu_rgb_88[2]);
+    rgb_matrix_set_color(92, cpu_rgb_92[0], cpu_rgb_92[1], cpu_rgb_92[2]);
     switch (encoder_mode) {
         case ENC_MODE_0:
             // print screen
-            rgb_matrix_set_color(69, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(69, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             break;
         case ENC_MODE_1:
             // print screen
-            rgb_matrix_set_color(69, r_acc_8008, g_acc_8008, b_acc_8008);
+            rgb_matrix_set_color(69, col_red_susu[0], col_red_susu[1], col_red_susu[2]);
             break;
         case ENC_MODE_2:
             rgb_matrix_set_color(69, 0xff, 0x69, 0xB4);
@@ -466,79 +498,79 @@ void rgb_matrix_indicators_kb(void) {
         case _QWERTY:
             // Esc
             // print("In _QWERTY Layer, setting RGB");
-            rgb_matrix_set_color(0,  255, 255, 255);
+            // rgb_matrix_set_color(0,  col_green_susu[0], col_green_susu[1], col_green_susu[2]);
             break;
         case _FUNC:
             // Esc
-            rgb_matrix_set_color(0,  255, 0, 0);
+            rgb_matrix_set_color(0,  col_red_susu[0], col_red_susu[1], col_red_susu[2]);
             // print("In _FUNC Layer, setting RGB");
             // Print Screen
-            rgb_matrix_set_color(69, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(69, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // Num Row
-            rgb_matrix_set_color(7,  r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(13, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(19, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(24, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(29, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(35, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(40, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(45, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(51, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(57, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(62, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(78, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(7,  col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(13, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(19, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(24, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(29, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(35, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(40, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(45, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(51, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(57, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(62, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(78, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // QMK RGB Controls
-            rgb_matrix_set_color(14, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(15, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(16, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(38, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(90, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(93, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(14, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(15, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(16, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(38, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(90, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(93, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // Arrows
-            rgb_matrix_set_color(94, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(94, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(95, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(97, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(79, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // PgUp PgDown
-            rgb_matrix_set_color(86, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(82, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(86, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(82, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             break;
         case _MAPS:
             // Esc
             rgb_matrix_set_color(0,  0, 255, 0);
             // print("In _MAPS Layer, setting RGB");
             // 1-2-3-4
-            rgb_matrix_set_color(7,  r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(13, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(19, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(24, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(7,  col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(13, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(19, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(24, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // C-D
-            rgb_matrix_set_color(22, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(21, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(22, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(21, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // Arrows
-            rgb_matrix_set_color(94, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
-            rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(94, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(95, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(97, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+            rgb_matrix_set_color(79, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             // Del
-            rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
+            rgb_matrix_set_color(79, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
             break;
         case _COLEMAK_DH:
             rgb_matrix_set_color(0,  0, 255, 255);
             break;
         case _MACOS:
             // Esc
-            rgb_matrix_set_color(0,  0, 0, 255);
+            rgb_matrix_set_color(0,  255, 0, 255);
             break;
     }
     if (mouseEnabled && biton32(layer_state) == _QWERTY) {
         // F9
-        rgb_matrix_set_color(50, r_mod_8008, g_mod_8008, b_mod_8008);
+        rgb_matrix_set_color(50, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
         // Arrows
-        rgb_matrix_set_color(94, r_mod_8008, g_mod_8008, b_mod_8008);
-        rgb_matrix_set_color(95, r_mod_8008, g_mod_8008, b_mod_8008);
-        rgb_matrix_set_color(97, r_mod_8008, g_mod_8008, b_mod_8008);
-        rgb_matrix_set_color(79, r_mod_8008, g_mod_8008, b_mod_8008);
+        rgb_matrix_set_color(94, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+        rgb_matrix_set_color(95, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+        rgb_matrix_set_color(97, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
+        rgb_matrix_set_color(79, col_blue_susu[0], col_blue_susu[1], col_blue_susu[2]);
     }
 }
 #endif
