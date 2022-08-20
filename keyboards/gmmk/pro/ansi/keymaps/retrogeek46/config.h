@@ -1,5 +1,7 @@
 #pragma once
 
+#define MIDI_ADVANCED
+
 #ifdef RGB_MATRIX_ENABLE
 #    define RGB_MATRIX_KEYPRESSES  // reacts to keypresses
 #    define RGB_MATRIX_FRAMEBUFFER_EFFECTS

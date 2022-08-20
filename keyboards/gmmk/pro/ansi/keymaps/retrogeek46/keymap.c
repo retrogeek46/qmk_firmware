@@ -18,11 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <print.h>
 #include "raw_hid.h"
 #include "openrgb.h"
+#include "midi.h"
+
+extern MidiDevice midi_device;
+
+#define MIDI_CC_OFF 0
+#define MIDI_CC_ON  127
 
 enum layers {
     _QWERTY,
     _COLEMAK_DH,
     _MACOS,
+    _MIDI,
     _FUNC,
     _MAPS,
     NUMBER_OF_LAYERS
@@ -31,7 +38,7 @@ enum layers {
 enum my_keycodes {
   ENC_MODE = SAFE_RANGE,
   MOU_MODE,
-  MCR_TEST,
+  TEST_RGB,
   LYR_STATE
 };
 
@@ -47,9 +54,6 @@ uint8_t current_os = 0;
 uint8_t layer_to_switch = 0;
 bool mouseEnabled = false;
 
-// int r_mod_8008 = 60 ; int g_mod_8008 = 71 ; int b_mod_8008 = 86 ;
-// int r_acc_8008 = 243; int g_acc_8008 = 75 ; int b_acc_8008 = 127;
-
 int col_mod_8008[3] = {60, 71, 86};
 int col_acc_8008[3] = {243, 75, 127};
 
@@ -57,15 +61,6 @@ int col_blue_susu[3] = {0, 255, 255};
 int col_yellow_susu[3] = {200, 200, 0};
 int col_red_susu[3] = {255, 0, 0};
 int col_green_susu[3] = {50, 255, 0};
-
-// int cpu_rgb_R_68 = 255; int cpu_rgb_G_68 = 255; int cpu_rgb_B_68 = 255;
-// int cpu_rgb_R_71 = 255; int cpu_rgb_G_71 = 255; int cpu_rgb_B_71 = 255;
-// int cpu_rgb_R_74 = 255; int cpu_rgb_G_74 = 255; int cpu_rgb_B_74 = 255;
-// int cpu_rgb_R_77 = 255; int cpu_rgb_G_77 = 255; int cpu_rgb_B_77 = 255;
-// int cpu_rgb_R_81 = 255; int cpu_rgb_G_81 = 255; int cpu_rgb_B_81 = 255;
-// int cpu_rgb_R_84 = 255; int cpu_rgb_G_84 = 255; int cpu_rgb_B_84 = 255;
-// int cpu_rgb_R_88 = 255; int cpu_rgb_G_88 = 255; int cpu_rgb_B_88 = 255;
-// int cpu_rgb_R_92 = 255; int cpu_rgb_G_92 = 255; int cpu_rgb_B_92 = 255;
 
 int cpu_rgb_68[3] = {255, 255, 255};
 int cpu_rgb_71[3] = {255, 255, 255};
@@ -75,6 +70,12 @@ int cpu_rgb_81[3] = {255, 255, 255};
 int cpu_rgb_84[3] = {255, 255, 255};
 int cpu_rgb_88[3] = {255, 255, 255};
 int cpu_rgb_92[3] = {255, 255, 255};
+
+int col_midi_flat[3] = {255, 100, 255};
+int col_midi_nat[3] = {255, 255, 255};
+
+int col_test[3] = {255, 255, 255};
+bool test_rgb = false;
 
 
 // macos specific defines
@@ -136,17 +137,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL,   KC_LALT, KC_LGUI,                            KC_SPC,                                       KC_APP,  MO(_FUNC), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
+    [_MIDI] = LAYOUT(
+        TO(0),     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
+        _______,   XXXXXXX, MI_Cs,   MI_Ds,   XXXXXXX, MI_Fs,   MI_Gs,   MI_As,   XXXXXXX, MI_Cs_1, MI_Ds_1, XXXXXXX, XXXXXXX, _______,          _______,
+        MI_OCTU,   MI_C,    MI_D,    MI_E,    MI_F,    MI_G,    MI_A,    MI_B,    MI_C_1,  MI_D_1,  MI_E_1,  XXXXXXX, XXXXXXX, XXXXXXX,          _______,
+        MO(_MAPS), XXXXXXX, XXXXXXX, XXXXXXX, MI_Fs_1, MI_Gs_1, MI_As_1, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX,          _______,
+        MI_OCTD,   XXXXXXX, XXXXXXX, MI_F_1,  MI_G_1,  MI_A_1,  MI_B_1,  MI_C_2,  XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX,          _______, _______,
+        _______,   _______, _______,                            _______,                            _______, _______, _______, _______, _______, _______
+    ),
+
     [_FUNC] = LAYOUT(
-        _______, KC_MYCM, KC_WHOM, KC_CALC, KC_MSEL, KC_MPRV, KC_MNXT, KC_MPLY, KC_MSTP, KC_MUTE, KC_VOLD, KC_VOLU, _______, KC_PSCR,         KC_MPLY,
-        _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______,          _______,
-        _______, _______, RGB_VAI, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RESET,            _______,
-        _______, _______, RGB_VAD, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          KC_PGUP,
-        _______, _______, RGB_HUD, RGB_HUI, _______, _______, NK_TOGG, _______, _______, _______, _______,          RGB_TOG,          RGB_MOD, KC_PGDN,
-        _______, _______, _______,                            _______,                            _______, _______, _______, RGB_SPD, RGB_RMOD, RGB_SPI
+        _______, KC_MYCM, KC_WHOM, KC_CALC, KC_MSEL, KC_MPRV, KC_MNXT,  KC_MPLY, KC_MSTP, KC_MUTE, KC_VOLD, KC_VOLU, _______, KC_PSCR,           KC_MPLY,
+        _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,    KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______,           _______,
+        _______, _______, RGB_VAI, _______, _______, _______, _______,  _______, _______, _______, _______, _______, _______, RESET,             _______,
+        _______, _______, RGB_VAD, _______, _______, _______, TEST_RGB, _______, _______, _______, _______, _______,          _______,           KC_PGUP,
+        _______, _______, RGB_HUD, RGB_HUI, _______, _______, NK_TOGG,  _______, _______, _______, _______,          RGB_TOG,          RGB_MOD,  KC_PGDN,
+        _______, _______, _______,                            _______,                             _______, _______, _______, RGB_SPD, RGB_RMOD, RGB_SPI
     ),
 
     [_MAPS] = LAYOUT(
-        _______, TO(0)  , TO(1)  , TO(2)  , TO(3)  , LYR_STATE, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
+        _______, TO(0)  , TO(1)  , TO(2)  , TO(3)  , TO(4)  , _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, KC_F13 ,  KC_F14,  KC_F15,  KC_F16, _______, _______, _______, _______, _______, _______, _______, _______, _______,          LYR_STATE,
         _______, _______, _______, _______, _______, _______, _______, _______, KC_UP,   _______, _______, _______, _______, _______,          _______,
         _______, _______, _______,  KC_F18, _______, _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, _______, _______,          _______,          _______,
@@ -236,14 +246,6 @@ void cpu_temp_rgb_helper(int col[], int led_index) {
         default:
             break;
     }
-}
-
-void set_cpu_temp_rgb_low(void) {
-    // cpu_temp_rgb_helper(0,255,0);
-}
-
-void set_cpu_temp_rgb_high(void) {
-    // cpu_temp_rgb_helper(255,0,0);
 }
 
 void set_cpu_usage_rgb(uint8_t cpu_usage) {
@@ -349,6 +351,14 @@ void update_os_state(uint8_t current_os_param) {
     }
 }
 
+void test_rgb_value(uint8_t r, uint8_t g, uint8_t b) {
+    // printf("RGB Values %d %d %d", r, g, b);
+    test_rgb = true;
+    col_test[0] = r;
+    col_test[1] = g;
+    col_test[2] = b;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LYR_STATE:
@@ -356,6 +366,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_to_switch = (layer_to_switch + 1) % (NUMBER_OF_LAYERS - 1);
                 // printf("layer state is %d, layer var is %d \n", biton32(layer_state), layer_to_switch);
                 layer_move(layer_to_switch);
+            }
+            return false;
+        case TEST_RGB:
+            if (record->event.pressed) {
+                test_rgb = !test_rgb;
             }
             return false;
         // toggle encoder states
@@ -456,6 +471,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 void rgb_matrix_indicators_kb(void) {
+    if (test_rgb) {
+        rgb_matrix_set_color(0, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(67, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(70, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(73, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(76, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(80, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(83, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(87, col_test[0], col_test[1], col_test[2]);
+        rgb_matrix_set_color(91, col_test[0], col_test[1], col_test[2]);
+    }
     // sidebars
     // // left side
     // rgb_matrix_set_color(67, cpu_rgb_R, cpu_rgb_G, cpu_rgb_B);
@@ -497,7 +523,6 @@ void rgb_matrix_indicators_kb(void) {
     switch (biton32(layer_state)) {
         case _QWERTY:
             // Esc
-            // print("In _QWERTY Layer, setting RGB");
             // rgb_matrix_set_color(0,  col_green_susu[0], col_green_susu[1], col_green_susu[2]);
             break;
         case _FUNC:
@@ -561,6 +586,42 @@ void rgb_matrix_indicators_kb(void) {
         case _MACOS:
             // Esc
             rgb_matrix_set_color(0,  255, 0, 255);
+            break;
+        case _MIDI:
+            // Esc
+            rgb_matrix_set_color(0 ,  255, 255, 255);
+            // first row
+            rgb_matrix_set_color(13,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            rgb_matrix_set_color(19,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+
+            rgb_matrix_set_color(29,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            rgb_matrix_set_color(35,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            rgb_matrix_set_color(40,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+
+            rgb_matrix_set_color(51,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            rgb_matrix_set_color(57,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            // second row
+            rgb_matrix_set_color(8 ,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(14,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(20,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(25,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(30,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(36,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(41,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(46,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(52,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(58,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            // third row
+            rgb_matrix_set_color(26,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            rgb_matrix_set_color(31,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            rgb_matrix_set_color(37,  col_midi_flat[0], col_midi_flat[1], col_midi_flat[2]);
+            // fourth row
+            rgb_matrix_set_color(22,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(27,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(32,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(38,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+            rgb_matrix_set_color(43,  col_midi_nat[0], col_midi_nat[1], col_midi_nat[2]);
+
             break;
     }
     if (mouseEnabled && biton32(layer_state) == _QWERTY) {

@@ -56,7 +56,6 @@ void openrgb_direct_mode_set_leds(uint8_t *data);
 
 void update_encoder_state(void);
 void send_encoder_state(void);
-void set_cpu_temp_rgb_low(void);
-void set_cpu_temp_rgb_high(void);
 void set_cpu_usage_rgb(uint8_t);
 void update_os_state(uint8_t);
+void test_rgb_value(uint8_t, uint8_t, uint8_t);

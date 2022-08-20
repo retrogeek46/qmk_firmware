@@ -208,16 +208,16 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                     send_encoder_state();
                     break;
                 case 3:
-                    set_cpu_temp_rgb_high();
-                    break;
-                case 4:
-                    set_cpu_temp_rgb_low();
-                    break;
-                case 5:
                     set_cpu_usage_rgb(data[2]);
                     break;
-                case 6:
+                case 4:
                     update_os_state(data[2]);
+                    break;
+                case 5:
+                    test_rgb_value(data[2], data[3], data[4]);
+                    // printf("RGB Values %d %d %d", data[2], data[3], data[4]);
+                    break;
+                case 6:
                     break;
             }
             break;
