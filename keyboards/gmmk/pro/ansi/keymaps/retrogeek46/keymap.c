@@ -57,10 +57,15 @@ bool mouseEnabled = false;
 int col_mod_8008[3] = {60, 71, 86};
 int col_acc_8008[3] = {243, 75, 127};
 
-int col_blue_susu[3] = {0, 255, 255};
-int col_yellow_susu[3] = {200, 200, 0};
-int col_red_susu[3] = {255, 0, 0};
-int col_green_susu[3] = {50, 255, 0};
+int col_blue_susu[3] = {20, 52, 164};
+int col_yellow_susu[3] = {0, 0, 0};
+int col_red_susu[3] = {10, 0, 0};
+int col_green_susu[3] = {50, 205, 50};
+
+int col_fir[3] = {255, 60, 0};
+int col_wat[3] = {0, 0, 255};
+int col_gra[3] = {0, 255, 0};
+int col_ele[3] = {255, 255, 0};
 
 int cpu_rgb_68[3] = {255, 255, 255};
 int cpu_rgb_71[3] = {255, 255, 255};
@@ -194,14 +199,6 @@ void send_encoder_state(void) {
 void cpu_temp_rgb_helper(int col[], int led_index) {
     switch (led_index) {
         case 0:
-            // cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
-            // cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
-            // cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
-            // cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
-            // cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
-            // cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
-            // cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
-            // cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
             cpu_rgb_68[0] = col[0]; cpu_rgb_68[1] = col[1]; cpu_rgb_68[2] = col[2];
             cpu_rgb_71[0] = col[0]; cpu_rgb_71[1] = col[1]; cpu_rgb_71[2] = col[2];
             cpu_rgb_74[0] = col[0]; cpu_rgb_74[1] = col[1]; cpu_rgb_74[2] = col[2];
@@ -212,35 +209,27 @@ void cpu_temp_rgb_helper(int col[], int led_index) {
             cpu_rgb_92[0] = col[0]; cpu_rgb_92[1] = col[1]; cpu_rgb_92[2] = col[2];
             break;
         case 68:
-            // cpu_rgb_R_68 = r; cpu_rgb_G_68 = g; cpu_rgb_B_68 = b;
             cpu_rgb_68[0] = col[0]; cpu_rgb_68[1] = col[1]; cpu_rgb_68[2] = col[2];
             break;
         case 71:
-            // cpu_rgb_R_71 = r; cpu_rgb_G_71 = g; cpu_rgb_B_71 = b;
             cpu_rgb_71[0] = col[0]; cpu_rgb_71[1] = col[1]; cpu_rgb_71[2] = col[2];
             break;
         case 74:
-            // cpu_rgb_R_74 = r; cpu_rgb_G_74 = g; cpu_rgb_B_74 = b;
             cpu_rgb_74[0] = col[0]; cpu_rgb_74[1] = col[1]; cpu_rgb_74[2] = col[2];
             break;
         case 77:
-            // cpu_rgb_R_77 = r; cpu_rgb_G_77 = g; cpu_rgb_B_77 = b;
             cpu_rgb_77[0] = col[0]; cpu_rgb_77[1] = col[1]; cpu_rgb_77[2] = col[2];
             break;
         case 81:
-            // cpu_rgb_R_81 = r; cpu_rgb_G_81 = g; cpu_rgb_B_81 = b;
             cpu_rgb_81[0] = col[0]; cpu_rgb_81[1] = col[1]; cpu_rgb_81[2] = col[2];
             break;
         case 84:
-            // cpu_rgb_R_84 = r; cpu_rgb_G_84 = g; cpu_rgb_B_84 = b;
             cpu_rgb_84[0] = col[0]; cpu_rgb_84[1] = col[1]; cpu_rgb_84[2] = col[2];
             break;
         case 88:
-            // cpu_rgb_R_88 = r; cpu_rgb_G_88 = g; cpu_rgb_B_88 = b;
             cpu_rgb_88[0] = col[0]; cpu_rgb_88[1] = col[1]; cpu_rgb_88[2] = col[2];
             break;
         case 92:
-            // cpu_rgb_R_92 = r; cpu_rgb_G_92 = g; cpu_rgb_B_92 = b;
             cpu_rgb_92[0] = col[0]; cpu_rgb_92[1] = col[1]; cpu_rgb_92[2] = col[2];
             break;
         default:
@@ -471,6 +460,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 void rgb_matrix_indicators_kb(void) {
+    // pokemon colors
+    rgb_matrix_set_color(50, col_ele[0], col_ele[1], col_ele[2]);
+    rgb_matrix_set_color(56, col_wat[0], col_wat[1], col_wat[2]);
+    rgb_matrix_set_color(61, col_gra[0], col_gra[1], col_gra[2]);
+    rgb_matrix_set_color(66, col_fir[0], col_fir[1], col_fir[2]);
     if (test_rgb) {
         rgb_matrix_set_color(0, col_test[0], col_test[1], col_test[2]);
         rgb_matrix_set_color(67, col_test[0], col_test[1], col_test[2]);
