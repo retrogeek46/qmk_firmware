@@ -1,0 +1,3 @@
+MIDI_ENABLE = yes
+RAW_ENABLE = yes
+CONSOLE_ENABLE = no

@@ -58,7 +58,7 @@ int col_acc_8008[3] = {243, 75, 127};
 
 int col_blue_susu[3] = {20, 52, 164};
 int col_yellow_susu[3] = {0, 0, 0};
-int col_red_susu[3] = {10, 0, 0};
+int col_red_susu[3] = {100, 0, 0};
 int col_green_susu[3] = {50, 205, 50};
 
 int col_fir[3] = {255, 60, 0};
