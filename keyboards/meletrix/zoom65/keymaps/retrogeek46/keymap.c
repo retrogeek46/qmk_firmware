@@ -57,31 +57,34 @@ bool mouseEnabled = false;
 #define MAC_END LGUI(KC_RGHT)
 #define M_CAP_ALL LSG(KC_3)
 #define M_CAP_PART LSG(KC_4)
+#define W_CAPA LGUI(KC_PSCR)
+#define L_BRCK S(KC_LBRC)
+#define R_BRCK S(KC_RBRC)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_all(
-        KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,      KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KC_MUTE, XXXXXXX,
+        KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,      KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KC_MPLY, XXXXXXX,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,      KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
         MO(5),     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,   KC_QUOT,          KC_ENT,  KC_HOME,
         KC_LSFT,   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,    KC_SLSH, KC_RSFT, KC_UP,   KC_END,
-        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(5),            KC_APP,  MO(_FUNC),          KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(_FUNC),          KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_COLEMAK_DH] = LAYOUT_all(
-        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,      KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KC_MUTE, XXXXXXX,
+        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,      KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KC_MPLY, XXXXXXX,
         KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN,   KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
         MO(5),     KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O,      KC_QUOT,          KC_ENT,  KC_HOME,
         KC_LSFT,   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_COMM, KC_DOT,    KC_SLSH, KC_RSFT, KC_UP,   KC_END,
-        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(5),            KC_APP,  MO(_FUNC),          KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(_FUNC),          KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_MACOS] = LAYOUT_all(
-        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,      KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KC_MUTE, XXXXXXX,
+        KC_GRV,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,      KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KC_MPLY, XXXXXXX,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,      KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
         MO(5),     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN,   KC_QUOT,          KC_ENT,  MAC_HME,
         KC_LSFT,   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,    KC_SLSH, KC_RSFT, KC_UP,   MAC_END,
-        KC_LCTL,   KC_LALT, KC_LGUI,                   KC_SPC,  KC_BSPC, MO(5),            KC_APP,  MO(_FUNC),          KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LALT, KC_LGUI,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(_FUNC),          KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_MIDI] = LAYOUT_all(
-        TO(0),     XXXXXXX, MI_Cs,   MI_Ds,   XXXXXXX, MI_Fs,   MI_Gs,   MI_As,   XXXXXXX, MI_Cs_1, MI_Ds_1,   XXXXXXX, XXXXXXX, _______, _______, XXXXXXX, KC_MUTE, XXXXXXX,
+        TO(0),     XXXXXXX, MI_Cs,   MI_Ds,   XXXXXXX, MI_Fs,   MI_Gs,   MI_As,   XXXXXXX, MI_Cs_1, MI_Ds_1,   XXXXXXX, XXXXXXX, _______, _______, XXXXXXX, KC_MPLY, XXXXXXX,
         MI_OCTU,   MI_C,    MI_D,    MI_E,    MI_F,    MI_G,    MI_A,    MI_B,    MI_C_1,  MI_D_1,  MI_E_1,    XXXXXXX, XXXXXXX, XXXXXXX, _______,
         MO(5),     XXXXXXX, XXXXXXX, XXXXXXX, MI_Fs_1, MI_Gs_1, MI_As_1, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX,          XXXXXXX, _______,
         MI_OCTD,   XXXXXXX, XXXXXXX, XXXXXXX, MI_F_1,  MI_G_1,  MI_A_1,  MI_B_1,  MI_C_2,  XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX, _______, _______,
@@ -89,16 +92,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_FUNC] = LAYOUT_all(
-        _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,    KC_F11,  KC_F12,  KC_PSCR, KC_SLEP, XXXXXXX, KC_MUTE, XXXXXXX,
-        _______,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______, _______, _______, _______,
-        _______,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______,          _______, KC_PGUP,
-        _______,   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______, _______, QK_BOOT, KC_PGDN,
-        _______,   _______, _______,                   _______, _______, _______,          _______, _______,            _______, _______, _______
+        _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,    KC_F11,  KC_F12,  W_CAPA,  KC_SLEP, XXXXXXX, KC_MPLY, XXXXXXX,
+        _______,   KC_GRV,  _______, L_BRCK,  R_BRCK,  _______, _______, KC_HOME, KC_UP,   KC_END,  _______,   _______, _______, _______, QK_BOOT,
+        MO(5),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,    _______,          _______, KC_PGUP,
+        KC_LSFT,   KC_LSFT, _______, _______, _______, _______, _______, _______, _______, _______, _______,   _______, _______, _______, KC_PGDN,
+        _______,   _______, _______,                   KC_LSFT, _______, _______,          _______, _______,            _______, _______, _______
     ),
 
     [_MAPS] = LAYOUT_all(
-        ENC_MODE,  TO(0)  , TO(1)  , TO(2)  , TO(3)  , TO(4)  , _______, _______, _______, _______, _______,   _______, _______, _______, _______, XXXXXXX, KC_MUTE, XXXXXXX,
-        _______,   _______, _______, _______, _______, _______, _______, _______, KC_UP,   _______, _______,   _______, _______, _______, _______,
+        ENC_MODE,  TO(0)  , TO(1)  , TO(2)  , TO(3)  , TO(4)  , _______, _______, _______, _______, _______,   _______, _______, _______, _______, XXXXXXX, KC_MPLY, XXXXXXX,
+        _______,   _______, _______, _______, _______, _______, _______, KC_HOME, KC_UP,   KC_END,  _______,   _______, _______, _______, _______,
         _______,   _______, _______, KC_F18,  _______, _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, _______,   _______,          _______, _______,
         _______,   _______, _______, KC_F17,  _______, _______, _______, _______, _______, _______, _______,   _______, _______, KC_MS_U, _______,
         _______,   _______, _______,                   _______, _______, _______,          _______, _______,            KC_MS_L, KC_MS_D, KC_MS_R
@@ -188,7 +191,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         // toggle encoder states
         case ENC_MODE:
-            print("detected keystroke");
+            // print("detected keystroke");
             if (record->event.pressed) {
                 if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
                     encoder_mode = 0;
@@ -226,57 +229,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return true;
             }
             return true;
-        // toggle mouse mode
-        case MOU_MODE:
-            if (record->event.pressed) {
-                mouseEnabled = !mouseEnabled;
-            }
-            return false;
-        // if mouse mode is active, arrow keys will control cursor
-        case KC_UP:
-            if (mouseEnabled) {
-                if (record->event.pressed) {
-                    register_code(KC_MS_U);
-                } else {
-                    unregister_code(KC_MS_U);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        case KC_LEFT:
-            if (mouseEnabled) {
-                if (record->event.pressed) {
-                    register_code(KC_MS_L);
-                } else {
-                    unregister_code(KC_MS_L);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        case KC_DOWN:
-            if (mouseEnabled) {
-                if (record->event.pressed) {
-                    register_code(KC_MS_D);
-                } else {
-                    unregister_code(KC_MS_D);
-                }
-                return false;
-            } else {
-                return true;
-            }
-        case KC_RGHT:
-            if (mouseEnabled) {
-                if (record->event.pressed) {
-                    register_code(KC_MS_R);
-                } else {
-                    unregister_code(KC_MS_R);
-                }
-                return false;
-            } else {
-                return true;
-            }
         default:
             return true;
     }
@@ -284,7 +236,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    printf("in encoder update user %d", encoder_mode);
+    // print("in encoder update user\n");
     if (clockwise) {
         switch (encoder_mode) {
             case ENC_MODE_0:

@@ -51,7 +51,8 @@ static uint8_t encoder_resolutions[NUM_ENCODERS] = ENCODER_RESOLUTIONS;
 #    define ENCODER_CLOCKWISE false
 #    define ENCODER_COUNTER_CLOCKWISE true
 #endif
-static int8_t encoder_LUT[] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
+//static int8_t encoder_LUT[] = {0, -1, 1, 0, 1, 0, 0, -1, -1, 0, 0, 1, 0, 1, -1, 0};
+static int8_t encoder_LUT[] = {0, -1, 1, 2, 1, 0, 0, -1, -1, 0, 0, 1, -2, 1, -1, 0};
 
 static uint8_t encoder_state[NUM_ENCODERS]  = {0};
 static int8_t  encoder_pulses[NUM_ENCODERS] = {0};
