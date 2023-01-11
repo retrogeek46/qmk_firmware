@@ -29,8 +29,10 @@ enum layers {
     _COLEMAK_DH,
     _MACOS,
     _MIDI,
-    _FUNC,
-    _FUNC_MAC,
+    _SC_WIN,
+    _SC_MAC,
+    _FN_WIN,
+    _FN_MAC,
     _MAPS,
     NUMBER_OF_LAYERS
 };
@@ -72,47 +74,63 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_all(
         KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KNOB, XXXXXXX,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
-        MO(6),     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_HOME,
+        MO(8),     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_HOME,
         KC_LSFT,   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, KC_UP,   KC_END,
-        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(4),            KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(6),            KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_COLEMAK_DH] = LAYOUT_all(
         KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KNOB, XXXXXXX,
         KC_TAB,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
-        MO(6),     KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,          KC_ENT,  KC_HOME,
+        MO(8),     KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,          KC_ENT,  KC_HOME,
         KC_LSFT,   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, KC_UP,   KC_END,
-        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(4),            KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LGUI, KC_LALT,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(6),            KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_MACOS] = LAYOUT_all(
         KC_ESC,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_BSPC, XXXXXXX, KNOB, XXXXXXX,
         KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
-        MO(6),     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  MAC_HME,
+        MO(8),     KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  MAC_HME,
         KC_LSFT,   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, KC_UP,   MAC_END,
-        KC_LCTL,   KC_LALT, KC_LGUI,                   KC_SPC,  KC_BSPC, MO(4),            KC_APP,  MO(4),            KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL,   KC_LALT, KC_LGUI,                   KC_SPC,  KC_BSPC, MO(5),            KC_APP,  MO(7),            KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_MIDI] = LAYOUT_all(
         TO(0),     XXXXXXX, MI_Cs,   MI_Ds,   XXXXXXX, MI_Fs,   MI_Gs,   MI_As,   XXXXXXX, MI_Cs_1, MI_Ds_1, XXXXXXX, XXXXXXX, _______, _______, XXXXXXX, KNOB, XXXXXXX,
         MI_OCTU,   MI_C,    MI_D,    MI_E,    MI_F,    MI_G,    MI_A,    MI_B,    MI_C_1,  MI_D_1,  MI_E_1,  XXXXXXX, XXXXXXX, XXXXXXX, _______,
-        MO(6),     XXXXXXX, XXXXXXX, XXXXXXX, MI_Fs_1, MI_Gs_1, MI_As_1, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          XXXXXXX, _______,
-        MI_OCTD,   XXXXXXX, XXXXXXX, XXXXXXX, MI_F_1,  MI_G_1,  MI_A_1,  MI_B_1,  MI_C_2,  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______,
-        _______,   _______, _______,                   _______, _______, _______,          _______, _______,          _______, _______, _______
+        MO(8),     MI_Fs_1, MI_Gs_1, MI_As_1, XXXXXXX, MI_Cs_2, MI_Ds_2, XXXXXXX, MI_Fs_2, MI_Gs_2, MI_As_2, XXXXXXX,          XXXXXXX, _______,
+        MI_OCTD,   MI_F_1,  MI_G_1,  MI_A_1,  MI_B_1,  MI_C_2,  MI_D_2,  MI_E_2,  MI_F_2,  MI_G_2,  MI_A_2,  MI_B_2,  XXXXXXX, XXXXXXX, _______,
+        _______,   _______, _______,                   _______, KC_F9,   _______,          _______, _______,          _______, _______, _______
     ),
 
-    [_FUNC] = LAYOUT_all(
+    [_SC_WIN] = LAYOUT_all(
+        KC_ESC,    S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5), S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), KC_F11,  KC_F12,  W_CAPA,  KC_SLEP, XXXXXXX, KNOB, XXXXXXX,
+        _______,   KC_GRV,  _______, KC_LBRC, KC_RBRC, _______, _______, KC_HOME, KC_UP,   KC_END,  KC_PSCR, _______, _______, _______, QK_BOOT,
+        MO(8),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,  _______,          _______, KC_PGUP,
+        KC_LSFT,   KC_LSFT, _______, L_ANGL,  R_ANGL,  _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGDN,
+        _______,   _______, _______,                   _______, KC_LSFT, _______,          _______, _______,          _______, _______, _______
+    ),
+
+    [_SC_MAC] = LAYOUT_all(
+        KC_ESC,    S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5), S(KC_6), S(KC_7), S(KC_8), S(KC_9), S(KC_0), KC_F11,  KC_F12,  M_CAPA,  KC_SLEP, XXXXXXX, KNOB, XXXXXXX,
+        _______,   KC_GRV,  _______, KC_LBRC, KC_RBRC, _______, _______, MAC_HME, KC_UP,   MAC_END, M_CAPP,  _______, _______, _______, QK_BOOT,
+        MO(8),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,  _______,          _______, KC_PGUP,
+        KC_LSFT,   KC_LSFT, _______, L_ANGL,  R_ANGL,  _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGDN,
+        _______,   _______, _______,                   _______, KC_LSFT, _______,          _______, _______,          _______, _______, _______
+    ),
+
+    [_FN_WIN] = LAYOUT_all(
         KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  W_CAPA,  KC_SLEP, XXXXXXX, KNOB, XXXXXXX,
         _______,   KC_GRV,  _______, KC_LBRC, KC_RBRC, _______, _______, KC_HOME, KC_UP,   KC_END,  KC_PSCR, _______, _______, _______, QK_BOOT,
-        MO(6),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,  _______,          _______, KC_PGUP,
+        MO(8),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,  _______,          _______, KC_PGUP,
         KC_LSFT,   KC_LSFT, _______, L_ANGL,  R_ANGL,  _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGDN,
         _______,   _______, _______,                   _______, KC_LSFT, _______,          _______, _______,          _______, _______, _______
     ),
 
-    [_FUNC_MAC] = LAYOUT_all(
+    [_FN_MAC] = LAYOUT_all(
         KC_ESC,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  M_CAPA,  KC_SLEP, XXXXXXX, KNOB, XXXXXXX,
         _______,   KC_GRV,  _______, KC_LBRC, KC_RBRC, _______, _______, MAC_HME, KC_UP,   MAC_END, M_CAPP,  _______, _______, _______, QK_BOOT,
-        MO(6),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,  _______,          _______, KC_PGUP,
+        MO(8),     KC_MINS, KC_EQL,  S(KC_9), S(KC_0), _______, _______, KC_LEFT, KC_DOWN, KC_RGHT, KC_ENT,  _______,          _______, KC_PGUP,
         KC_LSFT,   KC_LSFT, _______, L_ANGL,  R_ANGL,  _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_PGDN,
         _______,   _______, _______,                   _______, KC_LSFT, _______,          _______, _______,          _______, _______, _______
-    ),
+    ),    
 
     [_MAPS] = LAYOUT_all(
         ENC_MODE,  TO(0)  , TO(1)  , TO(2)  , TO(3)  , TO(4)  , TO(5),   _______, _______, _______, _______, _______, _______, _______, _______, XXXXXXX, KNOB, XXXXXXX,
