@@ -1,8 +1,5 @@
 name: PR Lint Format
 
-permissions:
-  contents: read
-
 on:
   pull_request:
     paths:

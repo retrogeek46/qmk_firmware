@@ -1,8 +1,5 @@
 name: CLI CI
 
-permissions:
-  contents: read
-
 on:
   push:
     branches:
