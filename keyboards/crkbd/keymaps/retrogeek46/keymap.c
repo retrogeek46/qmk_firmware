@@ -23,20 +23,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define L_ANGL S(KC_COMM)
 #define R_ANGL S(KC_DOT)
+
 int hid_code;
-int current_title_code[50];
-bool data_received;
+int current_title_code[21];
+int current_artist_code[21];
+bool updated;
 
 enum layers {
     _BASE,
     _SYMB,
     _NUMP,
     _MAPS,
-};
-
-enum my_keycodes {
-    ENC_MODE = SAFE_RANGE,
-    MOU_MODE
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -91,13 +88,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 const char code_to_name[60] = {
-    ' ', ' ', ' ', ' ', 'a', 'b', 'c', 'd', 'e', 'f',
-    'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-    'R', 'E', 'B', 'T', '_', '-', '=', '[', ']', '\\',
+    ' ', ' ', ' ', ' ',  'A', 'B', 'C', 'D', 'E', 'F',
+    'G', 'H', 'I', 'J',  'K', 'L', 'M', 'N', 'O', 'P',
+    'Q', 'R', 'S', 'T',  'U', 'V', 'W', 'X', 'Y', 'Z',
+    '1', '2', '3', '4',  '5', '6', '7', '8', '9', '0',
+    'R', 'E', 'B', 'T',  '_', '-', '=', '[', ']', '\\',
     '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '
 };
+
+void print_int_array(uint8_t *arr, int start_index) {
+    print("priting arr\n");
+    if (start_index < 1) {
+        start_index = 0;
+    }
+    int arrLen = sizeof arr / sizeof arr[0];
+    for (int i = start_index; i < arrLen; i++) {
+        uprintf("%d ", arr[i]);
+    }
+    print("\n");
+}
 
 void keyboard_post_init_user(void) {
     // Customize these values to desired behaviour
@@ -111,13 +120,14 @@ void send_keyboard_state(void) {
     send_data[2] = biton32(layer_state);
     // send_data[3] = current_os;
     raw_hid_send(send_data, sizeof(send_data));
-    // printf("sending encoder state %d %d %d\n", send_data[0], send_data[1], sizeof(send_data));
 }
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     // printf("getting raw hid data %d %d %d\n", data[0], data[1], data[2]);
     // print("raw hid\n");
-    int i;
+    int i = 0;
+    int j = 0;
+    bool is_artist = false;
     switch(*data) {
         case 1:
             // test_rgb_value(255, 0, 0);
@@ -140,18 +150,52 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                     // test_rgb_value(data[2], data[3], data[4]);
                     break;
                 case 6:
-                    // print("in case 6\n");
-                    // uprintf("getting raw hid data %s\n", data[2]);
-                    // uprintf("getting raw hid data int %d\n", data[2]);
-                    // uprintf("data %d %d %d\n", data[0], data[1], data[3]);
+                    uprintf("length %d\n", length);
+                    uprintf(
+                        "DATA %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d %d %d %d %d %d  %d\n", 
+                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
+                        data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22], data[23], data[24],
+                        data[25], data[26], data[27], data[28], data[29], data[30], data[31], data[32], data[33], data[34], data[35], data[36]
+                    );
+                    // print_int_array(data, 2);
                     for (i = 2; i < length; i++) {
-                        if (data[i] == 0) {break;}
-                        // uprintf("data %d\n", data[i]);
-                        current_title_code[i - 2] = data[i] - 93;
+                        if (data[i] == 255 && !is_artist) {
+                            uprintf("data should be 255, i %d, data[i] %d\n", i, data[i]);
+                            current_title_code[i - 2] = 0;
+                            is_artist = true;
+                            continue;
+                        }
+                        if (is_artist) {
+                            if (data[i] == 0) {
+                                uprintf("end of artist i %d\n", i);
+                                current_artist_code[j] = 0;
+                                break;
+                            }
+                            uprintf("adding to artist, i %d, j %d, data[i] %d\n", i, j, data[i]);
+                            current_artist_code[j] = data[i] - 93;
+                            j += 1;
+                        } else if (i < 21) {
+                            uprintf("adding to title, i %d, data[i] %d\n", i, data[i]);
+                            current_title_code[i - 2] = data[i] - 93;
+                        }
                     }
-                    current_title_code[i] = 0;
-                    // uprintf("code %d %d %d %d\n", current_title_code[0], current_title_code[1], current_title_code[2], current_title_code[3]);
-                    // uprintf("test %s\n", code_to_name[11]);
+                    // end artist string in case buffer ended before reading end of artist name
+                    current_artist_code[j] = 0;
+                    uprintf(
+                        "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d \n", 
+                        current_title_code[0], current_title_code[1], current_title_code[2], current_title_code[3], current_title_code[4], current_title_code[5],
+                        current_title_code[6], current_title_code[7], current_title_code[8], current_title_code[9], current_title_code[10], current_title_code[11], 
+                        current_title_code[12], current_title_code[13], current_title_code[14], current_title_code[15], current_title_code[16], current_title_code[17],
+                        current_title_code[18], current_title_code[19], current_title_code[20]
+                    );
+                    uprintf(
+                        "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d \n", 
+                        current_artist_code[0], current_artist_code[1], current_artist_code[2], current_artist_code[3], current_artist_code[4], current_artist_code[5],
+                        current_artist_code[6], current_artist_code[7], current_artist_code[8], current_artist_code[9], current_artist_code[10], current_artist_code[11], 
+                        current_artist_code[12], current_artist_code[13], current_artist_code[14], current_artist_code[15], current_artist_code[16], current_artist_code[17],
+                        current_artist_code[18], current_artist_code[19], current_artist_code[20]
+                    );
+                    updated = true;
                     break;
             }
             break;
@@ -170,36 +214,50 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 void oled_render_layer_state(void) {
-    // oled_write_P(PSTR("Layer: "), false);
     switch (biton32(layer_state)) {
         case _BASE:
-            oled_write_ln_P(PSTR("BASE"), false);
+            oled_write_ln_P(PSTR("Layer: BASE"), false);
             break;
         case _SYMB:
-            oled_write_ln_P(PSTR("SYMB"), false);
+            oled_write_ln_P(PSTR("Layer: SYMB"), false);
             break;
         case _NUMP:
-            oled_write_ln_P(PSTR("NUMP"), false);
+            oled_write_ln_P(PSTR("Layer: NUMP"), false);
             break;
     }
 }
 
-void oled_test_hid(void) {
-    // print("hid_code");
-    // print();
-    // printf(code_to_name[hid_code]);
-    // print("\n");
-    // char* strCurrentTitle;
-    // for (int i = 0; i < 50; i++) {
-    //     if (current_title_code == 0) {break;}
-    //     uprintf("parsing %s\n", code_to_name[current_title_code[i]]);
-    //     strCurrentTitle += code_to_name[current_title_code[i]];
+void oled_render_media(void) {
+    // if (updated) {
+    //     updated = false;
+    //     int arrLen = sizeof current_title_code / sizeof current_title_code[0];
+    //     for (int i = 0; i < arrLen; i++) {
+    //         // uprintf("%d ", current_title_code[i]);
+    //     }
+    //     // print("\n");
     // }
-    for (int i = 0; i < 50; i++) {
-        if (current_title_code[i] == 0) {
-            break;
+
+    bool skip = false;
+    for (int i = 0; i < 21; i++) {
+        if (current_title_code[i] == 0 || skip) {
+            skip = true;
+            oled_write_char(code_to_name[0], false);
+        } else {
+            oled_write_char(code_to_name[current_title_code[i]], false);
         }
-        oled_write_char(code_to_name[current_title_code[i]], false);
+    }
+    
+    oled_advance_page(false);
+    // oled_write_ln_P(PSTR("@"), false);
+    
+    skip = false;
+    for (int i = 0; i < 21; i++) {
+        if (current_artist_code[i] == 0 || skip) {
+            skip = true;
+            oled_write_char(code_to_name[0], false);
+        } else {
+            oled_write_char(code_to_name[current_artist_code[i]], false);
+        }
     }
 }
 
@@ -208,8 +266,8 @@ bool oled_task_user(void) {
     if (!is_keyboard_master()) {
         //
     } else {
-        oled_render_layer_state();
-        oled_test_hid();
+        // oled_render_layer_state();
+        oled_render_media();
     }
     return false;
 }
