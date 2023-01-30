@@ -126,8 +126,6 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     // printf("getting raw hid data %d %d %d\n", data[0], data[1], data[2]);
     // print("raw hid\n");
     int i = 0;
-    int j = 0;
-    bool is_artist = false;
     switch(*data) {
         case 1:
             // test_rgb_value(255, 0, 0);
@@ -150,51 +148,23 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                     // test_rgb_value(data[2], data[3], data[4]);
                     break;
                 case 6:
-                    uprintf("length %d\n", length);
-                    uprintf(
-                        "DATA %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d  %d %d %d %d %d %d %d %d %d %d  %d\n", 
-                        data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12],
-                        data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22], data[23], data[24],
-                        data[25], data[26], data[27], data[28], data[29], data[30], data[31], data[32], data[33], data[34], data[35], data[36]
-                    );
-                    // print_int_array(data, 2);
                     for (i = 2; i < length; i++) {
-                        if (data[i] == 255 && !is_artist) {
-                            uprintf("data should be 255, i %d, data[i] %d\n", i, data[i]);
+                        if (data[i] == 0) {
                             current_title_code[i - 2] = 0;
-                            is_artist = true;
-                            continue;
+                            break;
                         }
-                        if (is_artist) {
-                            if (data[i] == 0) {
-                                uprintf("end of artist i %d\n", i);
-                                current_artist_code[j] = 0;
-                                break;
-                            }
-                            uprintf("adding to artist, i %d, j %d, data[i] %d\n", i, j, data[i]);
-                            current_artist_code[j] = data[i] - 93;
-                            j += 1;
-                        } else if (i < 21) {
-                            uprintf("adding to title, i %d, data[i] %d\n", i, data[i]);
-                            current_title_code[i - 2] = data[i] - 93;
-                        }
+                        current_title_code[i - 2] = data[i] - 93;
                     }
-                    // end artist string in case buffer ended before reading end of artist name
-                    current_artist_code[j] = 0;
-                    uprintf(
-                        "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d \n", 
-                        current_title_code[0], current_title_code[1], current_title_code[2], current_title_code[3], current_title_code[4], current_title_code[5],
-                        current_title_code[6], current_title_code[7], current_title_code[8], current_title_code[9], current_title_code[10], current_title_code[11], 
-                        current_title_code[12], current_title_code[13], current_title_code[14], current_title_code[15], current_title_code[16], current_title_code[17],
-                        current_title_code[18], current_title_code[19], current_title_code[20]
-                    );
-                    uprintf(
-                        "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d \n", 
-                        current_artist_code[0], current_artist_code[1], current_artist_code[2], current_artist_code[3], current_artist_code[4], current_artist_code[5],
-                        current_artist_code[6], current_artist_code[7], current_artist_code[8], current_artist_code[9], current_artist_code[10], current_artist_code[11], 
-                        current_artist_code[12], current_artist_code[13], current_artist_code[14], current_artist_code[15], current_artist_code[16], current_artist_code[17],
-                        current_artist_code[18], current_artist_code[19], current_artist_code[20]
-                    );
+                    updated = true;
+                    break;
+                case 7:
+                    for (i = 2; i < length; i++) {
+                        if (data[i] == 0) {
+                            current_artist_code[i - 2] = 0;
+                            break;
+                        }
+                        current_artist_code[i - 2] = data[i] - 93;
+                    }
                     updated = true;
                     break;
             }
