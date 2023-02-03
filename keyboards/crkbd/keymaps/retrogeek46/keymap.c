@@ -36,6 +36,20 @@ enum layers {
     _MAPS,
 };
 
+enum custom_keycodes {
+    KC_OLED = SAFE_RANGE
+};
+
+enum oled_states {
+    OLED_CLOCK,
+    OLED_MEDIA,
+    OLED_LAYER,
+    _OLED_STATE_RANGE
+};
+
+uint8_t oled_state = OLED_CLOCK;
+bool reset_oled = false;
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
@@ -52,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [1] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB,  KC_GRV, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX,                      XXXXXXX, KC_HOME,   KC_UP,  KC_END,  KC_INS, KC_BSLS,
+       KC_TAB,  KC_GRV, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX,                      KC_OLED, KC_HOME,   KC_UP,  KC_END,  KC_INS, KC_BSLS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       QK_BOOT, KC_MINS, KC_EQL,  S(KC_9), S(KC_0), XXXXXXX,                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
@@ -93,7 +107,7 @@ const char code_to_name[60] = {
     'Q', 'R', 'S', 'T',  'U', 'V', 'W', 'X', 'Y', 'Z',
     '1', '2', '3', '4',  '5', '6', '7', '8', '9', '0',
     'R', 'E', 'B', 'T',  '_', '-', '=', '[', ']', '\\',
-    '#', ';', '\'', '`', ',', '.', '/', ' ', ' ', ' '
+    '#', ';', '\'', '`', ',', '.', '/', ':', ' ', ' '
 };
 
 void print_int_array(uint8_t *arr, int start_index) {
@@ -172,6 +186,25 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     }
 }
 
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_OLED:
+            if (record->event.pressed) {
+                if (oled_state == _OLED_STATE_RANGE - 1) {
+                    oled_state = 0;
+                } else {
+                    oled_state = oled_state + 1 % _OLED_STATE_RANGE;
+                }
+                reset_oled = true;
+                return false;
+            } else {
+                return true;
+            }
+        default:
+            return true;
+    }
+}
+
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (!is_keyboard_master()) {
@@ -197,15 +230,49 @@ void oled_render_layer_state(void) {
     }
 }
 
+void oled_render_clock(void) {
+    int clock_label_code[6] = {6, 15, 18, 6, 14, 0};
+    bool skip = false;
+    for (int i = 0; i < 6; i++) {
+        if (clock_label_code[i] == 0 || skip) {
+            skip = true;
+            oled_write_char(code_to_name[0], false);
+        } else {
+            oled_write_char(code_to_name[clock_label_code[i]], false);
+        }
+    }
+
+    oled_advance_page(false);
+
+    int time_code[19] = {39, 32, 45, 9, 8, 5, 45, 31, 39, 31, 32, 1, 39, 34, 57, 39, 39, 19, 16};
+    skip = false;
+    for (int i = 0; i < 19; i++) {
+        if (time_code[i] == 0 || skip) {
+            skip = true;
+            oled_write_char(code_to_name[0], false);
+        } else {
+            oled_write_char(code_to_name[time_code[i]], false);
+        }
+    }
+}
+
 void oled_render_media(void) {
-    // if (updated) {
-    //     updated = false;
-    //     int arrLen = sizeof current_title_code / sizeof current_title_code[0];
-    //     for (int i = 0; i < arrLen; i++) {
-    //         // uprintf("%d ", current_title_code[i]);
-    //     }
-    //     // print("\n");
-    // }
+    current_title_code[0] = 11;
+    current_title_code[1] = 18;
+    current_title_code[2] = 16;
+    current_title_code[3] = 8;
+    current_title_code[4] = 0;
+
+    current_artist_code[0] = 19;
+    current_artist_code[1] = 4;
+    current_artist_code[2] = 22;
+    current_artist_code[3] = 22;
+    current_artist_code[4] = 8;
+    current_artist_code[5] = 17;
+    current_artist_code[6] = 10;
+    current_artist_code[7] = 8;
+    current_artist_code[8] = 21;
+    current_artist_code[9] = 0;
 
     bool skip = false;
     for (int i = 0; i < 21; i++) {
@@ -218,7 +285,6 @@ void oled_render_media(void) {
     }
     
     oled_advance_page(false);
-    // oled_write_ln_P(PSTR("@"), false);
     
     skip = false;
     for (int i = 0; i < 21; i++) {
@@ -236,8 +302,23 @@ bool oled_task_user(void) {
     if (!is_keyboard_master()) {
         //
     } else {
-        // oled_render_layer_state();
-        oled_render_media();
+        if (reset_oled) {
+            oled_clear();
+            reset_oled = false;
+        }
+        switch (oled_state) {
+            case OLED_CLOCK:
+                oled_render_clock();
+                break;
+            case OLED_MEDIA:
+                oled_render_media();
+                break;
+            case OLED_LAYER:
+                oled_render_layer_state();
+                break;
+            default:
+                oled_render_clock();
+        }
     }
     return false;
 }
