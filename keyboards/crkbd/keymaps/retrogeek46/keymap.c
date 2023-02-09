@@ -27,7 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 int hid_code;
 int current_title_code[21];
 int current_artist_code[21];
-bool updated;
+int time_code[21];
+bool media_updated;
+bool clock_updated;
 
 enum layers {
     _BASE,
@@ -68,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,  KC_GRV, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX,                      KC_OLED, KC_HOME,   KC_UP,  KC_END,  KC_INS, KC_BSLS,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      QK_BOOT, KC_MINS, KC_EQL,  S(KC_9), S(KC_0), XXXXXXX,                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT, XXXXXXX,
+      XXXXXXX, KC_MINS, KC_EQL,  S(KC_9), S(KC_0), XXXXXXX,                      XXXXXXX, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT, QK_BOOT,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, XXXXXXX, XXXXXXX,  L_ANGL,  R_ANGL, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_LGUI,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -167,9 +169,9 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                             current_title_code[i - 2] = 0;
                             break;
                         }
-                        current_title_code[i - 2] = data[i] - 93;
+                        current_title_code[i - 2] = data[i];
                     }
-                    updated = true;
+                    media_updated = true;
                     break;
                 case 7:
                     for (i = 2; i < length; i++) {
@@ -177,9 +179,19 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                             current_artist_code[i - 2] = 0;
                             break;
                         }
-                        current_artist_code[i - 2] = data[i] - 93;
+                        current_artist_code[i - 2] = data[i];
                     }
-                    updated = true;
+                    media_updated = true;
+                    break;
+                case 8:
+                    for (i = 2; i < length; i++) {
+                        if (data[i] == 0) {
+                            time_code[i - 2] = 0;
+                            break;
+                        }
+                        time_code[i - 2] = data[i];
+                    }
+                    clock_updated = true;
                     break;
             }
             break;
@@ -231,20 +243,20 @@ void oled_render_layer_state(void) {
 }
 
 void oled_render_clock(void) {
-    int clock_label_code[6] = {6, 15, 18, 6, 14, 0};
+    // int clock_label_code[6] = {6, 15, 18, 6, 14, 0};
     bool skip = false;
-    for (int i = 0; i < 6; i++) {
-        if (clock_label_code[i] == 0 || skip) {
-            skip = true;
-            oled_write_char(code_to_name[0], false);
-        } else {
-            oled_write_char(code_to_name[clock_label_code[i]], false);
-        }
-    }
+    // for (int i = 0; i < 6; i++) {
+    //     if (clock_label_code[i] == 0 || skip) {
+    //         skip = true;
+    //         oled_write_char(code_to_name[0], false);
+    //     } else {
+    //         oled_write_char(code_to_name[clock_label_code[i]], false);
+    //     }
+    // }
 
-    oled_advance_page(false);
+    // oled_advance_page(false);
 
-    int time_code[19] = {39, 32, 45, 9, 8, 5, 45, 31, 39, 31, 32, 1, 39, 34, 57, 39, 39, 19, 16};
+    // int time_code[19] = {39, 32, 45, 9, 8, 5, 45, 31, 39, 31, 32, 1, 39, 34, 57, 39, 39, 19, 16};
     skip = false;
     for (int i = 0; i < 19; i++) {
         if (time_code[i] == 0 || skip) {
@@ -257,22 +269,22 @@ void oled_render_clock(void) {
 }
 
 void oled_render_media(void) {
-    current_title_code[0] = 11;
-    current_title_code[1] = 18;
-    current_title_code[2] = 16;
-    current_title_code[3] = 8;
-    current_title_code[4] = 0;
+    // current_title_code[0] = 11;
+    // current_title_code[1] = 18;
+    // current_title_code[2] = 16;
+    // current_title_code[3] = 8;
+    // current_title_code[4] = 0;
 
-    current_artist_code[0] = 19;
-    current_artist_code[1] = 4;
-    current_artist_code[2] = 22;
-    current_artist_code[3] = 22;
-    current_artist_code[4] = 8;
-    current_artist_code[5] = 17;
-    current_artist_code[6] = 10;
-    current_artist_code[7] = 8;
-    current_artist_code[8] = 21;
-    current_artist_code[9] = 0;
+    // current_artist_code[0] = 19;
+    // current_artist_code[1] = 4;
+    // current_artist_code[2] = 22;
+    // current_artist_code[3] = 22;
+    // current_artist_code[4] = 8;
+    // current_artist_code[5] = 17;
+    // current_artist_code[6] = 10;
+    // current_artist_code[7] = 8;
+    // current_artist_code[8] = 21;
+    // current_artist_code[9] = 0;
 
     bool skip = false;
     for (int i = 0; i < 21; i++) {
