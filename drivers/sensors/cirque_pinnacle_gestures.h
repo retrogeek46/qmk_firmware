@@ -37,6 +37,7 @@ typedef struct {
 typedef struct {
     uint16_t timer;
     bool     touchDown;
+    uint16_t xValue, yValue;
 } trackpad_tap_context_t;
 
 /* Enable/disable tap gesture */

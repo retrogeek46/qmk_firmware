@@ -31,15 +31,54 @@ static cirque_pinnacle_features_t features = {.tap_enable = true, .circular_scro
 #if defined(CIRQUE_PINNACLE_TAP_ENABLE) && CIRQUE_PINNACLE_POSITION_MODE
 static trackpad_tap_context_t tap;
 
+/* To set a trackpad exclusively as scroll wheel: outer_ring_pct = 100, trigger_px = 0, trigger_ang = 0 */
+static circular_scroll_context_t scroll = {.config = {.outer_ring_pct = 33,
+                                                      .trigger_px     = 16,
+                                                      .trigger_ang    = 9102, /* 50 degrees */
+                                                      .wheel_clicks   = 18}};
+
+
 static report_mouse_t trackpad_tap(report_mouse_t mouse_report, pinnacle_data_t touchData) {
+
     if (touchData.touchDown != tap.touchDown) {
         tap.touchDown = touchData.touchDown;
         if (!touchData.zValue) {
             if (timer_elapsed(tap.timer) < CIRQUE_PINNACLE_TAPPING_TERM && tap.timer != 0) {
-                mouse_report.buttons = pointing_device_handle_buttons(mouse_report.buttons, true, POINTING_DEVICE_BUTTON1);
+#    if defined(CIRQUE_PINNACLE_SECONDARY_TAP_ENABLE)
+                uint8_t           center = INT8_MAX, mag;
+                uint16_t          scale = cirque_pinnacle_get_scale();
+                int8_t x,y;
+                if (scale) {
+                    /* Rotate coordinates into a consistent orientation */
+                    report_mouse_t rot = {.x = (int8_t)((int32_t)tap.xValue * INT8_MAX * 2 / scale - center), .y = (int8_t)((int32_t)tap.yValue * INT8_MAX * 2 / scale - center)};
+#    if defined(SPLIT_POINTING_ENABLE) && defined(POINTING_DEVICE_COMBINED)
+                    if (!is_keyboard_left()) {
+                        rot = pointing_device_adjust_by_defines_right(rot);
+                    } else
+#    endif
+                    {
+                        rot = pointing_device_adjust_by_defines(rot);
+                    }
+                    x = rot.x;
+                    y = rot.y;
+                } else {
+                    x = 0;
+                    y = 0;
+                }
+                mag = sqrt16(x * x + y * y);
+                if (mag * 100 / center >= 100 - scroll.config.outer_ring_pct)
+                    mouse_report.buttons = pointing_device_handle_buttons(mouse_report.buttons, true, POINTING_DEVICE_BUTTON2);
+                else
+#    endif
+                {
+                  mouse_report.buttons = pointing_device_handle_buttons(mouse_report.buttons, true, POINTING_DEVICE_BUTTON1);
+                }
+
             }
         }
         tap.timer = timer_read();
+        tap.xValue = touchData.xValue;
+        tap.yValue = touchData.yValue;
     }
     if (timer_elapsed(tap.timer) > (CIRQUE_PINNACLE_TOUCH_DEBOUNCE)) {
         tap.timer = 0;
@@ -57,11 +96,6 @@ void cirque_pinnacle_enable_tap(bool enable) {
 #    if !CIRQUE_PINNACLE_POSITION_MODE
 #        error "Circular scroll is not supported in relative mode"
 #    endif
-/* To set a trackpad exclusively as scroll wheel: outer_ring_pct = 100, trigger_px = 0, trigger_ang = 0 */
-static circular_scroll_context_t scroll = {.config = {.outer_ring_pct = 33,
-                                                      .trigger_px     = 16,
-                                                      .trigger_ang    = 9102, /* 50 degrees */
-                                                      .wheel_clicks   = 18}};
 
 static inline uint16_t atan2_16(int32_t dy, int32_t dx) {
     if (dy == 0) {
