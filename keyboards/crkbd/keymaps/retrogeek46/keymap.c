@@ -63,7 +63,7 @@ uint8_t encoder_mode = ENC_MODE_0;
 uint8_t oled_state = OLED_LAYER;
 uint8_t ENC_RGB_0[3] = {200, 200, 200};
 uint8_t ENC_RGB_1[3] = {0, 0, 110};
-uint8_t curr_enc_col[3] = {200, 200, 200};
+// uint8_t curr_enc_col[3] = {200, 200, 200};
 bool reset_oled = false;
 
 
@@ -244,14 +244,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 #define NUM_LED_PER_SIDE 27
-bool rgb_matrix_indicators_kb(void) {
-    if (is_keyboard_master()) {
-        // rgb_matrix_set_color(led_index, 100, 0, 0);
-    } else {
-        rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, curr_enc_col[0], curr_enc_col[1], curr_enc_col[2]);
-    }
-    return true;
-}
+// bool rgb_matrix_indicators_kb(void) {
+//     if (is_keyboard_master()) {
+//         // rgb_matrix_set_color(led_index, 100, 0, 0);
+//     } else {
+//         if (encoder_mode == ENC_MODE_0) {
+//             // printf("rgb enc 0");
+//             rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_0[0], ENC_RGB_0[1], ENC_RGB_0[2]);
+//         } else if (encoder_mode == ENC_MODE_1) {
+//             // printf("rgb enc 1");
+//             rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_1[0], ENC_RGB_1[1], ENC_RGB_1[2]);
+//         }
+//     }
+//     return true;
+// }
 #endif
 
 #ifdef OLED_ENABLE
@@ -330,6 +336,7 @@ void oled_render_media(void) {
 bool oled_task_user(void) {
     if (!is_keyboard_master()) {
         oled_render_static_art();
+        oled_scroll_right();
     } else {
         if (reset_oled) {
             oled_clear();
@@ -358,15 +365,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     if (clockwise) {
         switch (encoder_mode) {
             case ENC_MODE_0:
-                curr_enc_col[0] = ENC_RGB_0[0];
-                curr_enc_col[1] = ENC_RGB_0[1];
-                curr_enc_col[2] = ENC_RGB_0[2];
                 tap_code(KC_RIGHT);
                 break;
             case ENC_MODE_1:
-                curr_enc_col[0] = ENC_RGB_1[0];
-                curr_enc_col[1] = ENC_RGB_1[1];
-                curr_enc_col[2] = ENC_RGB_1[2];
                 tap_code16(KC_WH_D);
                 break;
             case ENC_MODE_2:
@@ -379,15 +380,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     } else {
         switch (encoder_mode) {
             case ENC_MODE_0:
-                curr_enc_col[0] = ENC_RGB_0[0];
-                curr_enc_col[1] = ENC_RGB_0[1];
-                curr_enc_col[2] = ENC_RGB_0[2];
                 tap_code(KC_LEFT);
                 break;
             case ENC_MODE_1:
-                curr_enc_col[0] = ENC_RGB_1[0];
-                curr_enc_col[1] = ENC_RGB_1[1];
-                curr_enc_col[2] = ENC_RGB_1[2];
                 tap_code16(KC_WH_U);
                 break;
             case ENC_MODE_2:
