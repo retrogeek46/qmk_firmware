@@ -29,6 +29,7 @@ int hid_code;
 int current_title_code[21];
 int current_artist_code[21];
 int time_code[21];
+int led_index = 0;
 bool media_updated;
 bool clock_updated;
 
@@ -60,7 +61,12 @@ enum encoder_modes {
 
 uint8_t encoder_mode = ENC_MODE_0;
 uint8_t oled_state = OLED_LAYER;
+uint8_t ENC_RGB_0[3] = {200, 200, 200};
+uint8_t ENC_RGB_1[3] = {0, 0, 110};
+uint8_t curr_enc_col[3] = {200, 200, 200};
 bool reset_oled = false;
+
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_split_3x6_3(
@@ -129,7 +135,6 @@ void keyboard_post_init_user(void) {
 }
 
 void update_encoder_state(void) {
-    // print("triggered through raw_hid");
     if (encoder_mode == _NUM_OF_ENC_MODES - 1) {
         encoder_mode = 0;
     } else {
@@ -143,6 +148,10 @@ void send_keyboard_state(void) {
     send_data[2] = biton32(layer_state);
     // send_data[3] = current_os;
     raw_hid_send(send_data, sizeof(send_data));
+}
+
+void test_rgb_value(int index) {
+    led_index = index;
 }
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
@@ -168,7 +177,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                     // update_os_state(data[2]);
                     break;
                 case 5:
-                    // test_rgb_value(data[2], data[3], data[4]);
+                    test_rgb_value(data[2]);
                     break;
                 case 6:
                     for (i = 2; i < length; i++) {
@@ -233,6 +242,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+#ifdef RGB_MATRIX_ENABLE
+#define NUM_LED_PER_SIDE 27
+bool rgb_matrix_indicators_kb(void) {
+    if (is_keyboard_master()) {
+        // rgb_matrix_set_color(led_index, 100, 0, 0);
+    } else {
+        rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, curr_enc_col[0], curr_enc_col[1], curr_enc_col[2]);
+    }
+    return true;
+}
+#endif
+
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (!is_keyboard_master()) {
@@ -256,6 +277,17 @@ void oled_render_layer_state(void) {
             oled_write_ln_P(PSTR("Layer: NUMP"), false);
             break;
     }
+}
+
+static const char PROGMEM saitama_ok[] = {
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,160,168,170,234,250,254,255,127,127,127,127,127,127,127,127,255,255,255,255,255,127,127,127,127,127,127,127,127,255,248,224,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,192,224,224,240,240,248,248,248,248,248,240,240,224,224,192,128,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,160,136,168,  8,170,170,170,255,255,255,255,243,237,221,221,221,221,213,221,237,243,255,127,255,243,237,221,221,221,221,213,221,237,243,255,255,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 64, 64,240,252,255,255,255,  7,251,251,251,  7,255,255,  3,223,175,119,251,255,255,255,252,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2,  8, 10,138,162,170,191,255,255,255,255,255,255,255,255,255,255,255,255,255,239,224,255,255,255,255,255,255,255,255,255,255, 63,  7,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  7, 15, 31, 63,255,254,254,254,255,255,255,254,255,255,255,254,255,127, 31, 15,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  2, 10, 42,171,239,255,255,255,255,255,255,255,255,255,255,254,254,254,254,254,255,255,255,255,127, 31,  7,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  3,  3,  3,  3,  3,  1,  1,  1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+};
+
+void oled_render_static_art(void) {
+    oled_write_raw_P(saitama_ok, sizeof(saitama_ok));
 }
 
 void oled_render_clock(void) {
@@ -297,7 +329,7 @@ void oled_render_media(void) {
 // Used to draw on to the oled screen
 bool oled_task_user(void) {
     if (!is_keyboard_master()) {
-        //
+        oled_render_static_art();
     } else {
         if (reset_oled) {
             oled_clear();
@@ -326,9 +358,15 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     if (clockwise) {
         switch (encoder_mode) {
             case ENC_MODE_0:
+                curr_enc_col[0] = ENC_RGB_0[0];
+                curr_enc_col[1] = ENC_RGB_0[1];
+                curr_enc_col[2] = ENC_RGB_0[2];
                 tap_code(KC_RIGHT);
                 break;
             case ENC_MODE_1:
+                curr_enc_col[0] = ENC_RGB_1[0];
+                curr_enc_col[1] = ENC_RGB_1[1];
+                curr_enc_col[2] = ENC_RGB_1[2];
                 tap_code16(KC_WH_D);
                 break;
             case ENC_MODE_2:
@@ -341,9 +379,15 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     } else {
         switch (encoder_mode) {
             case ENC_MODE_0:
+                curr_enc_col[0] = ENC_RGB_0[0];
+                curr_enc_col[1] = ENC_RGB_0[1];
+                curr_enc_col[2] = ENC_RGB_0[2];
                 tap_code(KC_LEFT);
                 break;
             case ENC_MODE_1:
+                curr_enc_col[0] = ENC_RGB_1[0];
+                curr_enc_col[1] = ENC_RGB_1[1];
+                curr_enc_col[2] = ENC_RGB_1[2];
                 tap_code16(KC_WH_U);
                 break;
             case ENC_MODE_2:
