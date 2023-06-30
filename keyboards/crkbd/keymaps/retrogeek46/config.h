@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_POINTING_ENABLE
 #define POINTING_DEVICE_RIGHT
 #define POINTING_DEVICE_ROTATION_90
+#define SPLIT_TRANSACTION_IDS_USER ENC_SYNC
 
 #define ENCODERS_PAD_A { B5 }
 #define ENCODERS_PAD_B { B4 }

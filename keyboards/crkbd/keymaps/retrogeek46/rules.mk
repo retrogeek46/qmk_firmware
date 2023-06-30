@@ -8,5 +8,3 @@ CONSOLE_ENABLE    = no
 RAW_ENABLE        = yes
 LTO_ENABLE        = yes
 ENCODER_ENABLE    = yes
-POINTING_DEVICE_ENABLE = yes
-POINTING_DEVICE_DRIVER = cirque_pinnacle_i2c

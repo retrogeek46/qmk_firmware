@@ -20,19 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "raw_hid.h"
 #include <print.h>
+#include "transactions.h"
 
-#define L_ANGL S(KC_COMM)
-#define R_ANGL S(KC_DOT)
 #define KC_CAPA LGUI(KC_PSCR)
 #define KC_CAPS LGUI(S(KC_S))
-
-int hid_code;
-int current_title_code[21];
-int current_artist_code[21];
-int time_code[21];
-int led_index = 0;
-bool media_updated;
-bool clock_updated;
 
 enum layers {
     _BASE,
@@ -61,13 +52,17 @@ enum encoder_modes {
 };
 
 uint8_t encoder_mode = ENC_MODE_0;
-uint8_t oled_state = OLED_LAYER;
+uint8_t oled_state   = OLED_LAYER;
 uint8_t ENC_RGB_0[3] = {200, 200, 200};
 uint8_t ENC_RGB_1[3] = {0, 0, 110};
-// uint8_t curr_enc_col[3] = {200, 200, 200};
-bool reset_oled = false;
-
-
+int     hid_code;
+int     current_title_code[21];
+int     current_artist_code[21];
+int     time_code[21];
+int     led_index = 0;
+bool    media_updated;
+bool    clock_updated;
+bool    reset_oled = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_split_3x6_3(
@@ -87,9 +82,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,  KC_GRV, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX,                      KC_OLED, KC_HOME,   KC_UP,  KC_END,  KC_INS, KC_SLEP,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, KC_MINS, KC_EQL,  S(KC_9), S(KC_0), XXXXXXX,                      KC_ENCD, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT,  KC_DEL,
+      KC_LCTL, KC_MINS, KC_EQL,  KC_LPRN, KC_RPRN, XXXXXXX,                      KC_ENCD, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT,  KC_DEL,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, XXXXXXX, XXXXXXX,  L_ANGL,  R_ANGL, XXXXXXX,                      KC_CAPA, KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, KC_LGUI,
+      KC_LSFT, KC_UNDS, KC_PLUS,   KC_LT,   KC_GT, XXXXXXX,                      KC_CAPA, KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, KC_LGUI,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                            KC_SPC,   MO(3), KC_LALT,    KC_BSPC,   MO(1), KC_LGUI
                                       //`--------------------------'  `--------------------------'
@@ -97,11 +92,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [2] = LAYOUT_split_3x6_3(
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-      QK_BOOT, XXXXXXX,    KC_7,    KC_8,    KC_9, KC_DEL ,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_SLEP,
+      QK_BOOT, XXXXXXX,    KC_7,    KC_8,    KC_9, KC_DEL ,                      XXXXXXX,   KC_F9,  KC_F10,  KC_F11,  KC_F12, KC_SLEP,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,    KC_0,    KC_4,    KC_5,    KC_6, KC_INS ,                      KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
+      KC_LCTL,    KC_0,    KC_4,    KC_5,    KC_6, KC_INS ,                      XXXXXXX,   KC_F5,   KC_F6,   KC_F7,   KC_F8, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    KC_0,    KC_1,    KC_2,    KC_3, XXXXXXX,                      KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, KC_TILD,
+      KC_LSFT,    KC_0,    KC_1,    KC_2,    KC_3, XXXXXXX,                      XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
                                            KC_SPC,   MO(2), KC_LALT,    KC_BSPC,   MO(3),  KC_APP
                                       //`--------------------------'  `--------------------------'
@@ -111,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       RGB_TOG, KC_ENCD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, QK_BOOT,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LCTL, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -129,10 +124,18 @@ const char code_to_name[60] = {
     '#', ';', '\'', '`', ',', '.', '/', ':', ' ', ' '
 };
 
+void enc_sync_receiver(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+    const enum encoder_modes* m2s = (const enum encoder_modes*) in_data;
+    // printf("in sync reciever method");
+    encoder_mode = *m2s;
+}
+
 void keyboard_post_init_user(void) {
     // Customize these values to desired behaviour
     debug_enable = true;
     //debug_keyboard = true;
+
+    transaction_register_rpc(ENC_SYNC, enc_sync_receiver);
 }
 
 void update_encoder_state(void) {
@@ -141,6 +144,8 @@ void update_encoder_state(void) {
     } else {
         encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
     }
+    // printf("exec-ing sync method");
+    transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
 }
 
 void send_keyboard_state(void) {
@@ -236,6 +241,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
                 }
+                transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
             }
             return false;
         default:
@@ -245,20 +251,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 #define NUM_LED_PER_SIDE 27
-// bool rgb_matrix_indicators_kb(void) {
-//     if (is_keyboard_master()) {
-//         // rgb_matrix_set_color(led_index, 100, 0, 0);
-//     } else {
-//         if (encoder_mode == ENC_MODE_0) {
-//             // printf("rgb enc 0");
-//             rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_0[0], ENC_RGB_0[1], ENC_RGB_0[2]);
-//         } else if (encoder_mode == ENC_MODE_1) {
-//             // printf("rgb enc 1");
-//             rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_1[0], ENC_RGB_1[1], ENC_RGB_1[2]);
-//         }
-//     }
-//     return true;
-// }
+bool rgb_matrix_indicators_kb(void) {
+    if (is_keyboard_master()) {
+        // rgb_matrix_set_color(led_index, 100, 0, 0);
+    } else {
+        if (encoder_mode == ENC_MODE_0) {
+            // printf("rgb enc 0");
+            rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_0[0], ENC_RGB_0[1], ENC_RGB_0[2]);
+        } else if (encoder_mode == ENC_MODE_1) {
+            // printf("rgb enc 1");
+            rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_1[0], ENC_RGB_1[1], ENC_RGB_1[2]);
+        }
+    }
+    return true;
+}
 #endif
 
 #ifdef OLED_ENABLE
@@ -282,6 +288,17 @@ void oled_render_layer_state(void) {
             break;
         case _NUMP:
             oled_write_ln_P(PSTR("Layer: NUMP"), false);
+            break;
+    }
+    switch (encoder_mode) {
+        case ENC_MODE_0:
+            oled_write_ln_P(PSTR("Encoder: Seek"), false);
+            break;
+        case ENC_MODE_1:
+            oled_write_ln_P(PSTR("Encoder: Scroll"), false);
+            break;
+        case ENC_MODE_2:
+            oled_write_ln_P(PSTR("Encoder: AHK"), false);
             break;
     }
 }
