@@ -251,20 +251,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef RGB_MATRIX_ENABLE
 #define NUM_LED_PER_SIDE 27
-bool rgb_matrix_indicators_kb(void) {
-    if (is_keyboard_master()) {
-        // rgb_matrix_set_color(led_index, 100, 0, 0);
-    } else {
-        if (encoder_mode == ENC_MODE_0) {
-            // printf("rgb enc 0");
-            rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_0[0], ENC_RGB_0[1], ENC_RGB_0[2]);
-        } else if (encoder_mode == ENC_MODE_1) {
-            // printf("rgb enc 1");
-            rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_1[0], ENC_RGB_1[1], ENC_RGB_1[2]);
-        }
-    }
-    return true;
-}
+// bool rgb_matrix_indicators_kb(void) {
+//     if (is_keyboard_master()) {
+//         // rgb_matrix_set_color(led_index, 100, 0, 0);
+//     } else {
+//         if (encoder_mode == ENC_MODE_0) {
+//             // printf("rgb enc 0");
+//             rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_0[0], ENC_RGB_0[1], ENC_RGB_0[2]);
+//         } else if (encoder_mode == ENC_MODE_1) {
+//             // printf("rgb enc 1");
+//             rgb_matrix_set_color(24 + NUM_LED_PER_SIDE, ENC_RGB_1[0], ENC_RGB_1[1], ENC_RGB_1[2]);
+//         }
+//     }
+//     return true;
+// }
 #endif
 
 #ifdef OLED_ENABLE
