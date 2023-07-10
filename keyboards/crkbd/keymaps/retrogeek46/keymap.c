@@ -124,18 +124,18 @@ const char code_to_name[60] = {
     '#', ';', '\'', '`', ',', '.', '/', ':', ' ', ' '
 };
 
-void enc_sync_receiver(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
-    const enum encoder_modes* m2s = (const enum encoder_modes*) in_data;
-    // printf("in sync reciever method");
-    encoder_mode = *m2s;
-}
+// void enc_sync_receiver(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+//     const enum encoder_modes* m2s = (const enum encoder_modes*) in_data;
+//     // printf("in sync reciever method");
+//     encoder_mode = *m2s;
+// }
 
 void keyboard_post_init_user(void) {
     // Customize these values to desired behaviour
     debug_enable = true;
     //debug_keyboard = true;
 
-    transaction_register_rpc(ENC_SYNC, enc_sync_receiver);
+    // transaction_register_rpc(ENC_SYNC, enc_sync_receiver);
 }
 
 void update_encoder_state(void) {
@@ -145,7 +145,7 @@ void update_encoder_state(void) {
         encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
     }
     // printf("exec-ing sync method");
-    transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
+    // transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
 }
 
 void send_keyboard_state(void) {
@@ -241,7 +241,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     encoder_mode = encoder_mode + 1 % _NUM_OF_ENC_MODES;
                 }
-                transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
+                // transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
             }
             return false;
         default:
@@ -389,10 +389,10 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 tap_code16(KC_WH_D);
                 break;
             case ENC_MODE_2:
-                tap_code(KC_F24);
+                // tap_code(KC_F24);
                 break;
             default:
-                tap_code(KC_VOLU);
+                tap_code(KC_RIGHT);
                 break;
         }
     } else {
@@ -404,10 +404,10 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 tap_code16(KC_WH_U);
                 break;
             case ENC_MODE_2:
-                tap_code(KC_F23);
+                // tap_code(KC_F23);
                 break;
             default:
-                tap_code(KC_VOLD);
+                tap_code(KC_LEFT);
                 break;
         }
     }
