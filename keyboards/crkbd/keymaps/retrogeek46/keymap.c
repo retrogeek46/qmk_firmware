@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "raw_hid.h"
 #include <print.h>
-#include "transactions.h"
 
 #define KC_CAPA LGUI(KC_PSCR)
 #define KC_CAPS LGUI(S(KC_S))
@@ -411,6 +410,6 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 break;
         }
     }
-    return true;
+    return false;
 }
 #endif // ENCODER_ENABLE
