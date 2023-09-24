@@ -119,7 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
        KC_TAB,  KC_GRV, XXXXXXX, KC_LBRC, KC_RBRC, XXXXXXX,                      KC_OLED,  MAC_HM,   KC_UP,  MAC_ED,  KC_INS, KC_SLEP,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LGUI, KC_MINS, KC_EQL,  KC_LPRN, KC_RPRN,TO(_QWERTY),                    KC_ENCD, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT,  KC_DEL,
+      KC_LGUI, KC_MINS, KC_EQL,  KC_LPRN, KC_RPRN,TO(_QWERTY),                   KC_ENCD, KC_LEFT, KC_DOWN,KC_RIGHT,  KC_ENT,  KC_DEL,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LSFT, KC_UNDS, KC_PLUS,   KC_LT,   KC_GT, XXXXXXX,                      KC_CAPA, KC_CAPS, XXXXXXX, XXXXXXX, XXXXXXX, KC_LGUI,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
@@ -133,9 +133,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
       KC_LCTL,    KC_0,    KC_4,    KC_5,    KC_6, KC_INS ,                      XXXXXXX,   KC_F5,   KC_F6,   KC_F7,   KC_F8, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    KC_0,    KC_1,    KC_2,    KC_3, XXXXXXX,                      XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4, XXXXXXX,
+      KC_LSFT,    KC_0,    KC_1,    KC_2,    KC_3, XXXXXXX,                      XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4, KC_LGUI,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                           KC_SPC,MO(_NUM), KC_LGUI,    KC_BSPC,MO(_AUX),  KC_APP
+                                           KC_SPC,MO(_NUM), KC_LALT,    KC_BSPC,MO(_AUX),  KC_APP
                                       //`--------------------------'  `--------------------------'
   ),
 
