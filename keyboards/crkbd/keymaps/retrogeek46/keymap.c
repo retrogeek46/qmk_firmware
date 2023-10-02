@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "raw_hid.h"
 #include <print.h>
+#include "transactions.h"
 
 #define KC_CAPA LGUI(KC_PSCR)
 #define KC_CAPS LGUI(S(KC_S))
@@ -43,6 +44,7 @@ enum custom_keycodes {
 
 enum oled_states {
     OLED_LAYER,
+    OLED_KEYMAP,
     OLED_CLOCK,
     OLED_MEDIA,
     _OLED_STATE_RANGE
@@ -67,6 +69,7 @@ uint8_t oled_state   = OLED_LAYER;
 uint8_t ENC_RGB_0[3] = {200, 200, 200};
 uint8_t ENC_RGB_1[3] = {0, 0, 110};
 uint8_t current_os = WINDOWS;
+uint8_t current_layer = _QWERTY;
 int     hid_code;
 int     current_title_code[21];
 int     current_artist_code[21];
@@ -167,12 +170,17 @@ const char code_to_name[60] = {
 //     encoder_mode = *m2s;
 // }
 
+void oled_sync_receiver(uint8_t in_buflen, const void* in_data, uint8_t out_buflen, void* out_data) {
+    const enum oled_states* m2s = (const enum oled_states*) in_data;
+    oled_state = *m2s;
+}
+
 void keyboard_post_init_user(void) {
     // Customize these values to desired behaviour
     debug_enable = true;
     //debug_keyboard = true;
-
     // transaction_register_rpc(ENC_SYNC, enc_sync_receiver);
+    transaction_register_rpc(OLED_SYNC, oled_sync_receiver);
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -195,6 +203,16 @@ void update_encoder_state(void) {
     }
     // printf("exec-ing sync method");
     // transaction_rpc_exec(ENC_SYNC, sizeof(enum encoder_modes), &encoder_mode, 0, 0);
+}
+
+void update_oled_state(void) {
+    if (oled_state == _OLED_STATE_RANGE - 1) {
+        oled_state = 0;
+    } else {
+        oled_state = oled_state + 1 % _OLED_STATE_RANGE;
+    }
+    transaction_rpc_exec(OLED_SYNC, sizeof(enum oled_states), &oled_state, 0, 0);
+    reset_oled = true;
 }
 
 void send_keyboard_state(void) {
@@ -273,12 +291,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case KC_OLED:
             if (record->event.pressed) {
-                if (oled_state == _OLED_STATE_RANGE - 1) {
-                    oled_state = 0;
-                } else {
-                    oled_state = oled_state + 1 % _OLED_STATE_RANGE;
-                }
-                reset_oled = true;
+                update_oled_state();
                 return false;
             } else {
                 return true;
@@ -328,12 +341,94 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef OLED_ENABLE
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     if (!is_keyboard_master()) {
-      return OLED_ROTATION_270;  // flips the display 180 degrees if offhand
+      return OLED_ROTATION_180;  // flips the display 180 degrees if offhand
     }
     // else {
     //    return OLED_ROTATION_270;
     // }
     return rotation;
+}
+
+void oled_render_keymap_left(void) {
+    switch (biton32(layer_state)) {
+        case _QWERTY:
+            oled_write_ln_P(PSTR("esc|q|w|e|r|t"), false);
+            oled_write_ln_P(PSTR("ctl|a|s|d|f|g"), false);
+            oled_write_ln_P(PSTR("shf|z|x|c|v|b"), false);
+            oled_write_ln_P(PSTR("        spc|MO2|alt"), false);
+            break;
+        case _MACOS:
+            oled_write_ln_P(PSTR("esc|q|w|e|r|t"), false);
+            oled_write_ln_P(PSTR("cmd|a|s|d|f|g"), false);
+            oled_write_ln_P(PSTR("shf|z|x|c|v|b"), false);
+            oled_write_ln_P(PSTR("        spc|MO2|alt"), false);
+            break;
+        case _SYM:
+            oled_write_ln_P(PSTR("tab|`| |[|]| "), false);
+            oled_write_ln_P(PSTR("ctl|-|=|(|)|OS"), false);
+            oled_write_ln_P(PSTR("shf|_|+|<|>|"), false);
+            oled_write_ln_P(PSTR("        spc|MO2|alt"), false);
+            break;
+        case _MACSYM:
+            oled_write_ln_P(PSTR("tab|`| |[|]| "), false);
+            oled_write_ln_P(PSTR("cmd|-|=|(|)|OS"), false);
+            oled_write_ln_P(PSTR("shf|_|+|<|>|"), false);
+            oled_write_ln_P(PSTR("        spc|MO2|alt"), false);
+            break;
+        case _NUM:
+            oled_write_ln_P(PSTR("rst| |7|8|9|ins"), false);
+            oled_write_ln_P(PSTR("ctl|0|4|5|6|OS"), false);
+            oled_write_ln_P(PSTR("shf|0|1|2|3|del"), false);
+            oled_write_ln_P(PSTR("        spc|MO2|alt"), false);
+            break;
+        case _AUX:
+            oled_write_ln_P(PSTR("tog|  |  |  |  |"), false);
+            oled_write_ln_P(PSTR("ctl|h+|s+|v+|  |"), false);
+            oled_write_ln_P(PSTR("mod|h-|s-|v-|  |"), false);
+            oled_write_ln_P(PSTR("        spc|MO2|alt"), false);
+            break;
+    }
+}
+
+void oled_render_keymap_right(void) {
+    switch (biton32(layer_state)) {
+        case _QWERTY:
+            oled_write_ln_P(PSTR("       y|u|i|o|p|mut"), false);
+            oled_write_ln_P(PSTR("       h|j|k|l|;|'  "), false);
+            oled_write_ln_P(PSTR("       n|m|,|.|/|\\ "), false);
+            oled_write_ln_P(PSTR("bsp|MO1|gui"), false);
+            break;
+        case _MACOS:
+            oled_write_ln_P(PSTR("       y|u|i|o|p|mut"), false);
+            oled_write_ln_P(PSTR("       h|j|k|l|;|'  "), false);
+            oled_write_ln_P(PSTR("       n|m|,|.|/|\\ "), false);
+            oled_write_ln_P(PSTR("bsp|MO1|alt"), false);
+            break;
+        case _SYM:
+            oled_write_ln_P(PSTR("    old|⌂ |↑|∎|i|⧖  "), false);
+            oled_write_ln_P(PSTR("    enc|← |↓|→|⏎|dl "), false);
+            oled_write_ln_P(PSTR("    ssa|ss| | | |gui"), false);
+            oled_write_ln_P(PSTR("bsp|MO1|alt"), false);
+            break;
+        case _MACSYM:
+            oled_write_ln_P(PSTR("    old|⌂ |↑|∎|i|⧖  "), false);
+            oled_write_ln_P(PSTR("    enc|← |↓|→|⏎|dl "), false);
+            oled_write_ln_P(PSTR("    ssa|ss| | | |gui"), false);
+            oled_write_ln_P(PSTR("bsp|MO1|app"), false);
+            break;
+        case _NUM:
+            oled_write_ln_P(PSTR("   |f9|f10|f11|f12|⧖"), false);
+            oled_write_ln_P(PSTR("   |f5|f6 |f7 |f8 |f9"), false);
+            oled_write_ln_P(PSTR("   |f1|f2 |f3 |f4 |f5"), false);
+            oled_write_ln_P(PSTR("bsp|MO3|app"), false);
+            break;
+        case _AUX:
+            oled_write_ln_P(PSTR("      | | | | | "), false);
+            oled_write_ln_P(PSTR("      | | | | | "), false);
+            oled_write_ln_P(PSTR("      | | | | | "), false);
+            oled_write_ln_P(PSTR("bsp|MO1|app"), false);
+            break;
+    }
 }
 
 void oled_render_layer_state(void) {
@@ -440,9 +535,15 @@ void oled_render_media(void) {
 // Used to draw on to the oled screen
 bool oled_task_user(void) {
     if (!is_keyboard_master()) {
+        switch (oled_state) {
+            case OLED_KEYMAP:
+                oled_render_keymap_right();
+                break;
+            default:
+                oled_render_static_art();
+        }
         // oled_render_anim();
-        oled_render_static_art();
-        // oled_scroll_right();
+        // oled_scroll_right();    
     } else {
         if (reset_oled) {
             oled_clear();
@@ -457,6 +558,9 @@ bool oled_task_user(void) {
                 break;
             case OLED_LAYER:
                 oled_render_layer_state();
+                break;
+            case OLED_KEYMAP:
+                oled_render_keymap_left();
                 break;
             default:
                 oled_render_layer_state();
